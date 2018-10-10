@@ -35,6 +35,27 @@ var Organization = {
     country: 'name'
   }
 };
+
+var Initiative = {
+  name: 'name',
+  description: 'text',
+  type: 'word',
+  dataStart: 'date',
+  dataFinish: 'date',
+  timeStart: 'time',
+  timeFinish: 'time',
+  volunteers:['VolunteerId'],
+  creator: 'organizationId' or 'volunteerId',
+  location = {
+    lat: 'decimal:2',
+    lng: 'decimal:2',
+    zipCode: 'stringMask:/99999-999/',
+    address: 'text',
+    number: 'integer',
+    city: 'name',
+    country: 'name'
+  }
+};
 ```
 continua...
   
