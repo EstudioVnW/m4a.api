@@ -12,7 +12,7 @@ var Volunteer = {
   location = {
     lat: 'decimal:2',
     lng: 'decimal:2',
-    zipCode: 'stringMask:/99999-999/',
+    zipCode: 'stringMask:/9{5}-9{3}/',
     address: 'text',
     number: 'integer',
     city: 'name',
