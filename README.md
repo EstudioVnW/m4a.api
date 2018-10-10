@@ -20,12 +20,10 @@ var Volunteer = {
   }
 };
 
-var Volunteer = {
+var Organization = {
   name: 'name',
   email: 'email',
-  moreThan18Years: 'bool',
   motivation: 'enum:op1;op2;op3;op4',
-  remote: 'integer',
   areas: ['enum:op1;op2;op3;op4'],
   location = {
     lat: 'decimal:2',
