@@ -1,7 +1,29 @@
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
-    ds_profile: DataTypes.STRING,
-    ds_email: DataTypes.STRING,
+    ds_profile: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        isIn: {
+          args: [['Organization', 'People']],
+          msg: "ds_profile must be an organization or a people"
+        }
+      }
+    },
+    ds_email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: {
+        args: true,
+        msg: "ds_email must be unique"
+      },
+      validate: {
+        isEmail: {
+          args: true,
+          msg: "ds_email must be an email"
+        },
+      }
+    },
     ds_name: DataTypes.STRING,
     ds_bio: DataTypes.STRING,
     dt_birthday: DataTypes.DATE,

@@ -1,6 +1,5 @@
 'use strict';
 const { User } = require('../../domain/entities');
-const Err = require('../responses/errors');
 const Json = require('../responses/users');
 
 module.exports = class Users {
@@ -26,10 +25,7 @@ module.exports = class Users {
           })    
           res.json(lista);
         })
-        .catch(err => {
-          const error = Err.formatError(err)
-          res.status(error.status).json(error);
-        });
+        .catch(err => res.status(500).json(err))
     });
   }
 
@@ -40,10 +36,7 @@ module.exports = class Users {
         .then(user => {
           res.json(Json.formatUser(user));
         })
-        .catch(err => {
-          const error = Err.formatError(err)
-          res.status(error.status).json(error);
-        });
+        .catch(err => res.status(500).json(err))
     });
   }
 
@@ -58,7 +51,7 @@ module.exports = class Users {
           }
           res.json(Json.formatUser(user));
         })
-        .catch(err => res.status(500).json(Err.formatError(err)))
+        .catch(err => res.status(500).json(err))
     });
   }
 
