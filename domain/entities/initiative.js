@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const Initiatives = sequelize.define('Initiatives', {
+  const Initiative = sequelize.define('Initiative', {
     ds_website_url: {
       type: DataTypes.STRING,
       validate: {
@@ -42,9 +42,9 @@ module.exports = (sequelize, DataTypes) => {
     dt_finish: DataTypes.DATE,
   });
 
-  Initiatives.associate = models => {
-    Initiatives.belongsTo(models.Users);
+  Initiative.associate = models => {
+    Initiative.belongsTo(models.User);
   };
 
-  return Initiatives;
+  return Initiative;
 }

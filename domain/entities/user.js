@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const Users = sequelize.define('Users', {
+  const User = sequelize.define('User', {
     ds_profile: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -28,9 +28,6 @@ module.exports = (sequelize, DataTypes) => {
     ds_name: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: {
-        msg: "ds_name must be unique"
-      },
       validate: {
         notEmpty: {
           msg: "ds_name can't be empty"
@@ -57,5 +54,5 @@ module.exports = (sequelize, DataTypes) => {
     fl_is_allow_to_remote: DataTypes.BOOLEAN,
   });
 
-  return Users;
+  return User;
 }

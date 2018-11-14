@@ -16,7 +16,6 @@ module.exports = {
       },
       ds_name: {
         type: DataTypes.STRING,
-        unique: true,
       },
       ds_bio: {
         type: DataTypes.STRING,
@@ -53,6 +52,9 @@ module.exports = {
       },
       fl_is_allow_to_remote: {
         type: DataTypes.BOOLEAN,
+      },
+      ds_sdgs: {
+        type: DataTypes.STRING,
       },
       createdAt: {
         allowNull: false,
