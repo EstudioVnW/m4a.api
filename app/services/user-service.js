@@ -17,25 +17,16 @@ module.exports = class Users {
 
   findUsersList() {
     this.router.get('/users', async (req, res) => {
-      await User.findAll()
-        .then(users => {
-          const lista = []
-          users.map((user) => {
-            lista.push(Json.formatUser(user))
-          })    
-          res.json(lista);
-        })
+      await User.findAll().map(user => Json.formatUser(user))
+        .then(users => res.status(200).json(users))
         .catch(err => res.status(500).json(err))
     });
   }
 
-
   createUser() {
     this.router.post('/users', async (req, res) => {
       await User.create(req.body)
-        .then(user => {
-          res.json(Json.formatUser(user));
-        })
+        .then(user => res.status(200).json(Json.formatUser(user)))
         .catch(err => res.status(500).json(err))
     });
   }
@@ -45,11 +36,9 @@ module.exports = class Users {
       await User.find({ where: { id: req.params.id } })
         .then(user => {
           if (!user) {
-            res.status(404).json({
-              message: 'Didn’t find anything here!'
-            });
+            res.status(404).json({ message: 'Didn’t find anything here!' });
           }
-          res.json(Json.formatUser(user));
+          res.status(200).json(Json.formatUser(user));
         })
         .catch(err => res.status(500).json(err))
     });
@@ -64,7 +53,7 @@ module.exports = class Users {
 
       if (user) {
         User.update(updates, { where: { id: id } })
-        res.json({
+        res.status(200).json({
           type: 'User',
           message: 'User ' + id + ' was updated with success!'
         });
