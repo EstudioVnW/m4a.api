@@ -1,5 +1,5 @@
-const UserRes = {
-  formatUser: (user) => {
+const UserJson = {
+  format: (user) => {
     return {
       data: {
         type: `User`,
@@ -28,4 +28,4 @@ const UserRes = {
   }
 };
 
-module.exports = UserRes;
+module.exports = UserJson;

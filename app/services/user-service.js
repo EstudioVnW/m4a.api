@@ -18,7 +18,7 @@ module.exports = class Users {
   findUsersList() {
     this.router.get('/users', async (req, res) => {
       try {
-        const users = await User.findAll().map(user => Json.formatUser(user))
+        const users = await User.findAll().map(user => Json.format(user))
         res.status(200).json(users)
       }
       catch (err) {
@@ -31,7 +31,7 @@ module.exports = class Users {
     this.router.post('/users', async (req, res) => {
       try {
         const user = await User.create(req.body)
-        res.status(200).json(Json.formatUser(user))
+        res.status(200).json(Json.format(user))
       }
       catch (err) {
         res.status(500).json(err)
@@ -44,7 +44,7 @@ module.exports = class Users {
       try {
         const user = await User.find({ where: { id: req.params.id } })
         if (user) {
-          res.status(200).json(Json.formatUser(user));
+          res.status(200).json(Json.format(user));
         }
         else {
           res.status(404).json({ message: 'Didn’t find anything here!' });

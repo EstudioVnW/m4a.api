@@ -40,6 +40,15 @@ module.exports = (sequelize, DataTypes) => {
     fl_event_type: DataTypes.BOOLEAN,
     dt_start: DataTypes.DATE,
     dt_finish: DataTypes.DATE,
+    UserId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "UserId can't be empty"
+        }
+      }
+    }
   });
 
   Initiative.associate = models => {
