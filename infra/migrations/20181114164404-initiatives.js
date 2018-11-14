@@ -1,18 +1,14 @@
 module.exports = {
   up: (queryInterface, DataTypes) => {
-    queryInterface.createTable('Users', {
+    queryInterface.createTable('Initiatives', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: DataTypes.INTEGER,
       },
-      ds_profile: {
+      ds_website_url: {
         type: DataTypes.STRING,
-      },
-      ds_email: {
-        type: DataTypes.STRING,
-        unique: true,
       },
       ds_name: {
         type: DataTypes.STRING,
@@ -51,8 +47,14 @@ module.exports = {
       ds_sdgs: {
         type: DataTypes.STRING,
       },
-      fl_is_allow_to_remote: {
+      fl_event_type: {
         type: DataTypes.BOOLEAN,
+      },
+      dt_start: {
+        type: DataTypes.DATE,
+      },
+      dt_finish: {
+        type: DataTypes.DATE,
       },
       createdAt: {
         allowNull: false,
@@ -66,6 +68,6 @@ module.exports = {
   },
 
   down: (queryInterface) => {
-    queryInterface.dropTable('Users');
+    queryInterface.dropTable('Initiatives');
   }
 };

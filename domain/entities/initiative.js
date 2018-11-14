@@ -1,27 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
-  const Users = sequelize.define('Users', {
-    ds_profile: {
+  const Initiatives = sequelize.define('Initiatives', {
+    ds_website_url: {
       type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        isIn: {
-          args: [['organization', 'people']],
-          msg: "ds_profile must be an organization or a people using lowercase"
-        }
-      }
-    },
-    ds_email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: {
-        msg: "ds_email must be unique"
-      },
       validate: {
         notEmpty: {
-          msg: "ds_email can't be empty"
-        },
-        isEmail: {
-          msg: "ds_email must be an email"
+          msg: "ds_website_url can't be empty"
         },
       }
     },
@@ -54,8 +37,14 @@ module.exports = (sequelize, DataTypes) => {
     ds_causes: DataTypes.STRING,
     ds_areas: DataTypes.STRING,
     ds_sdgs: DataTypes.STRING,
-    fl_is_allow_to_remote: DataTypes.BOOLEAN,
+    fl_event_type: DataTypes.BOOLEAN,
+    dt_start: DataTypes.DATE,
+    dt_finish: DataTypes.DATE,
   });
 
-  return Users;
+  Initiatives.associate = models => {
+    Initiatives.belongsTo(models.Users);
+  };
+
+  return Initiatives;
 }
