@@ -5,8 +5,8 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         isIn: {
-          args: [['Organization', 'People']],
-          msg: "ds_profile must be an organization or a people"
+          args: [['organization', 'people']],
+          msg: "ds_profile must be an organization or a people using lowercase"
         }
       }
     },
@@ -14,18 +14,33 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       unique: {
-        args: true,
         msg: "ds_email must be unique"
       },
       validate: {
+        notEmpty: {
+          msg: "ds_email can't be empty"
+        },
         isEmail: {
-          args: true,
           msg: "ds_email must be an email"
         },
       }
     },
-    ds_name: DataTypes.STRING,
-    ds_bio: DataTypes.STRING,
+    ds_name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "ds_name can't be empty"
+        }
+      }
+    },
+    ds_bio: {
+      type: DataTypes.STRING,
+      len: {
+        args: [4,30],
+        msg: "ds_bio must be between 4 and 30 characters"
+      }
+    },
     dt_birthday: DataTypes.DATE,
     ds_avatar: DataTypes.STRING,
     ds_country: DataTypes.STRING,
