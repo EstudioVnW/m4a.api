@@ -55,5 +55,13 @@ module.exports = (sequelize, DataTypes) => {
     Initiative.belongsTo(models.User);
   };
 
+  Initiative.associate = models => {
+    Initiative.belongsToMany(models.User, {
+      through: 'Combinations',
+      as: 'users',
+      foreignKey: 'InitativeId',
+    })
+  }
+
   return Initiative;
 }

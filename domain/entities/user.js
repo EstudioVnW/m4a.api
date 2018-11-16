@@ -54,5 +54,13 @@ module.exports = (sequelize, DataTypes) => {
     fl_is_allow_to_remote: DataTypes.BOOLEAN,
   });
 
+  User.associate = models => {
+    User.belongsToMany(models.Initiative, {
+      through: 'Combinations',
+      as: 'initiatives',
+      foreignKey: 'UserId',
+    })
+  }
+
   return User;
 }
