@@ -13,7 +13,7 @@ module.exports = class Initiatives {
   }
 
   findInitiativesList() {
-    this.router.get('/initiative', async (req, res) => {
+    this.router.get('/initiatives', async (req, res) => {
       try {
         const initiatives = await Initiative.findAll().map(initiative => Json.format(initiative))
         res.status(200).json(initiatives)
@@ -25,7 +25,7 @@ module.exports = class Initiatives {
   }
 
   createInitiative() {
-    this.router.post('/initiative', async (req, res) => {
+    this.router.post('/initiatives', async (req, res) => {
       try {
         const initiative = await Initiative.create(req.body)
         res.status(200).json(Json.format(initiative))
