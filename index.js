@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const StatusService = require('./app/services/status-service');
 const UserService = require('./app/services/user-service');
 const InitiativeService = require('./app/services/initiative-service.js');
+const MatchService = require('./app/services/match-service');
 const port = 3000
 
 class Server {
@@ -30,6 +31,7 @@ class Server {
     new StatusService(this.router).expose();
     new UserService(this.router).expose();
     new InitiativeService(this.router).expose();
+    new MatchService(this.router).expose();
 
     // configs and start
     this.app.enable('trust proxy');

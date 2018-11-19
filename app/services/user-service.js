@@ -1,6 +1,5 @@
 'use strict';
 const { User } = require('../../domain/entities');
-const { Match } = require('../../domain/entities');
 const Json = require('../responses/users');
 
 module.exports = class Users {
@@ -14,8 +13,6 @@ module.exports = class Users {
     this.findUser();
     this.updateUser();
     this.deleteUser();
-    this.getMatches();
-    this.createMatch();
   }
 
   findUsersList() {
@@ -101,30 +98,6 @@ module.exports = class Users {
       }
       catch (err){
         res.status(500).json(err);
-      }
-    });
-  }
-
-  getMatches() {
-    this.router.get('/match', async (req, res) => {
-      try {
-        const matches = await Match.findAll().map(match => match)
-        res.status(200).json(matches)
-      }
-      catch (err) {
-        res.status(500).json(err)
-      }
-    });
-  }
-
-  createMatch() {
-    this.router.post('/match', async (req, res) => {
-      try {
-        const match = await Match.create(req.body)
-        res.status(200).json(match)
-      }
-      catch (err) {
-        res.status(500).json(err)
       }
     });
   }
