@@ -13,7 +13,7 @@ module.exports = class Users {
   }
 
   getMatches() {
-    this.router.get('/match', async (req, res) => {
+    this.router.get('/matchs', async (req, res) => {
       try {
         const matches = await Match.findAll().map(match => match)
         res.status(200).json(matches)
@@ -25,7 +25,7 @@ module.exports = class Users {
   }
 
   createMatch() {
-    this.router.post('/match', async (req, res) => {
+    this.router.post('/matchs', async (req, res) => {
       try {
         const match = await Match.create(req.body)
         res.status(200).json(match)
