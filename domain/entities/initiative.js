@@ -37,7 +37,15 @@ module.exports = (sequelize, DataTypes) => {
     causes: DataTypes.STRING,
     areas: DataTypes.STRING,
     sdgs: DataTypes.STRING,
-    eventType: DataTypes.BOOLEAN,
+    eventType: {
+      type: DataTypes.STRING,
+      validate: {
+        isIn: {
+          args: [['on going', 'one time']],
+          msg: "eventType must be: 'on going' or 'one time'"
+        }
+      }
+    },
     start: DataTypes.DATE,
     finish: DataTypes.DATE,
     UserId: {

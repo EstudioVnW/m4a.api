@@ -42,7 +42,7 @@ class Server {
     // configs and start
     this.app.enable('trust proxy');
     this.app.use('/', this.router);
-    this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+    this.app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     this.app.listen(port, () => {
       console.log(`Readyy! http://localhost:${port}/`);
     });

@@ -48,7 +48,7 @@ module.exports = {
         type: DataTypes.STRING,
       },
       eventType: {
-        type: DataTypes.BOOLEAN,
+        type: DataTypes.STRING,
       },
       start: {
         type: DataTypes.DATE,
