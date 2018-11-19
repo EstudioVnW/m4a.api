@@ -1,45 +1,45 @@
 module.exports = (sequelize, DataTypes) => {
   const Initiative = sequelize.define('Initiative', {
-    ds_website_url: {
-      type: DataTypes.STRING,
-      validate: {
-        notEmpty: {
-          msg: "ds_website_url can't be empty"
-        },
-      }
-    },
-    ds_name: {
+    name: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: {
-        msg: "ds_name must be unique"
+        msg: "name must be unique"
       },
       validate: {
         notEmpty: {
-          msg: "ds_name can't be empty"
+          msg: "name can't be empty"
         }
       }
     },
-    ds_bio: {
+    website: {
+      type: DataTypes.STRING,
+      validate: {
+        notEmpty: {
+          msg: "website can't be empty"
+        },
+      }
+    },
+    bio: {
       type: DataTypes.STRING,
       len: {
         args: [4,30],
-        msg: "ds_bio must be between 4 and 30 characters"
+        msg: "bio must be between 4 and 30 characters"
       }
     },
-    dt_birthday: DataTypes.DATE,
-    ds_avatar: DataTypes.STRING,
-    ds_country: DataTypes.STRING,
-    ds_city: DataTypes.STRING,
-    ds_address: DataTypes.STRING,
-    nr_latlong: DataTypes.STRING,
-    ds_skills: DataTypes.STRING,
-    ds_causes: DataTypes.STRING,
-    ds_areas: DataTypes.STRING,
-    ds_sdgs: DataTypes.STRING,
-    fl_event_type: DataTypes.BOOLEAN,
-    dt_start: DataTypes.DATE,
-    dt_finish: DataTypes.DATE,
+    birthday: DataTypes.DATE,
+    avatar: DataTypes.STRING,
+    country: DataTypes.STRING,
+    city: DataTypes.STRING,
+    address: DataTypes.STRING,
+    latlong: DataTypes.STRING,
+    skills: DataTypes.STRING,
+    causes: DataTypes.STRING,
+    areas: DataTypes.STRING,
+    sdgs: DataTypes.STRING,
+    eventType: DataTypes.BOOLEAN,
+    start: DataTypes.DATE,
+    finish: DataTypes.DATE,
     UserId: {
       type: DataTypes.INTEGER,
       allowNull: false,

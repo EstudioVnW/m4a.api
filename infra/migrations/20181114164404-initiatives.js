@@ -7,53 +7,53 @@ module.exports = {
         primaryKey: true,
         type: DataTypes.INTEGER,
       },
-      ds_website_url: {
-        type: DataTypes.STRING,
-      },
-      ds_name: {
+      name: {
         type: DataTypes.STRING,
         unique: true,
       },
-      ds_bio: {
+      website: {
         type: DataTypes.STRING,
       },
-      dt_birthday: {
+      bio: {
+        type: DataTypes.STRING,
+      },
+      birthday: {
         type: DataTypes.DATE,
       },
-      ds_avatar: {
+      avatar: {
         type: DataTypes.STRING,
       },
-      ds_country: {
+      country: {
         type: DataTypes.STRING,
       },
-      ds_city: {
+      city: {
         type: DataTypes.STRING,
       },
-      ds_address: {
+      address: {
         type: DataTypes.STRING,
       },
-      nr_latlong: {
+      latlong: {
         type: DataTypes.STRING,
       },
-      ds_skills: {
+      skills: {
         type: DataTypes.STRING,
       },
-      ds_causes: {
+      causes: {
         type: DataTypes.STRING,
       },
-      ds_areas: {
+      areas: {
         type: DataTypes.STRING,
       },
-      ds_sdgs: {
+      sdgs: {
         type: DataTypes.STRING,
       },
-      fl_event_type: {
+      eventType: {
         type: DataTypes.BOOLEAN,
       },
-      dt_start: {
+      start: {
         type: DataTypes.DATE,
       },
-      dt_finish: {
+      finish: {
         type: DataTypes.DATE,
       },
       createdAt: {
@@ -63,6 +63,12 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: DataTypes.DATE,
+      },
+      UserId: {
+        type: DataTypes.INTEGER,
+        references: { model: 'Users', key: 'id' },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
       },
     });
   },

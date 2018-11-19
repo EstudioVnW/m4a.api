@@ -1,11 +1,17 @@
 'use strict';
 
+// configs
 const express = require('express');
 const bodyParser = require('body-parser');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./config/swagger.json');
+
+// services
 const StatusService = require('./app/services/status-service');
 const UserService = require('./app/services/user-service');
 const InitiativeService = require('./app/services/initiative-service.js');
 const MatchService = require('./app/services/match-service');
+
 const port = 3000
 
 class Server {
@@ -36,6 +42,7 @@ class Server {
     // configs and start
     this.app.enable('trust proxy');
     this.app.use('/', this.router);
+    this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     this.app.listen(port, () => {
       console.log(`Readyy! http://localhost:${port}/`);
     });

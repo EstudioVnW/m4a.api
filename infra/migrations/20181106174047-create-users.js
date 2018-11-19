@@ -7,54 +7,57 @@ module.exports = {
         primaryKey: true,
         type: DataTypes.INTEGER,
       },
-      ds_profile: {
+      username: {
         type: DataTypes.STRING,
       },
-      ds_email: {
+      email: {
         type: DataTypes.STRING,
         unique: true,
       },
-      ds_name: {
+      password: {
         type: DataTypes.STRING,
       },
-      ds_bio: {
+      bio: {
         type: DataTypes.STRING,
       },
-      dt_birthday: {
+      birthday: {
         type: DataTypes.DATE,
       },
-      ds_avatar: {
+      avatar: {
         type: DataTypes.STRING,
       },
-      ds_country: {
+      country: {
         type: DataTypes.STRING,
       },
-      ds_city: {
+      city: {
         type: DataTypes.STRING,
       },
-      ds_address: {
+      address: {
         type: DataTypes.STRING,
       },
-      nr_latlong: {
+      latlong: {
         type: DataTypes.STRING,
       },
-      ds_skills: {
+      skills: {
         type: DataTypes.STRING,
       },
-      ds_causes: {
+      causes: {
         type: DataTypes.STRING,
       },
-      ds_areas: {
+      areas: {
         type: DataTypes.STRING,
       },
-      ds_sdgs: {
+      sdgs: {
         type: DataTypes.STRING,
       },
-      fl_is_allow_to_remote: {
-        type: DataTypes.BOOLEAN,
+      allowToRemote: {
+        type: DataTypes.INTEGER,
       },
-      ds_sdgs: {
+      userProfile: {
         type: DataTypes.STRING,
+      },
+      userStatus: {
+        type: DataTypes.INTEGER,
       },
       createdAt: {
         allowNull: false,
