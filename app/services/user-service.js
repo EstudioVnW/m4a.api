@@ -40,9 +40,9 @@ module.exports = class Users {
   }
 
   findUser() {
-    this.router.get('/users/:id', async (req, res) => {
+    this.router.get('/users/:userId', async (req, res) => {
       try {
-        const user = await User.find({ where: { id: req.params.id } })
+        const user = await User.find({ where: { id: req.params.userId } })
         if (user) {
           res.status(200).json({data: Json.format(user)});
         }
@@ -57,44 +57,34 @@ module.exports = class Users {
   }
 
   updateUser() {
-    this.router.put('/users/:id', async (req, res) => {
+    this.router.put('/users/:userId', async (req, res) => {
       try {
-        const id = req.params.id;
-        const updates = req.body;
-        
-        const user = await User.find({ where: { id: id } })
-
-        if (user) {
-          User.update(updates, { where: { id: id } })
-          res.status(200).json({
-            type: 'User',
-            message: 'User ' + id + ' was updated with success!'
-          });
+        const find = await User.find({ where: { id: req.params.userId } })
+        if (find) {
+          const update = await User.update(req.body, { where: { id: req.params.userId } })
+          if (update) {
+            return res.status(201).json({ message: 'User has been updated.'});
+          }
         }
-
-        else {
-          res.status(404).json({ message: 'Didn’t find anything here!' });
-        }
+        return res.status(404).json({ message: 'Didn’t find anything here!' });
       }
-      catch (err){
-        res.status(500).json(err);
+      catch (err) {
+        return res.status(500).json(err);
       }
     });
   }
 
   deleteUser() {
-    this.router.delete('/users/:id', async (req, res) => {
+    this.router.delete('/users/:userId', async (req, res) => {
       try {
-        const id = req.params.id;
-
-        let deleted = await User.destroy({ where: { id: id } })
-
-        if (deleted) {
-          res.json({type: 'User', message: 'User ' + id + ' was deleted with success!' });
+        const find = await User.find({ where: { id: req.params.userId } })
+        if (find) {
+          const deleted = await User.destroy({ where: { id: req.params.userId } })
+          if (deleted) {
+            return res.status(201).json({ message: 'User has been deleted.'});
+          }
         }
-        else {
-          res.status(404).json({ message: 'Didn’t find anything here!' });
-        }
+        return res.status(404).json({ message: 'Didn’t find anything here!' });
       }
       catch (err){
         res.status(500).json(err);
