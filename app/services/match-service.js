@@ -32,9 +32,8 @@ module.exports = class Users {
           where: { id: req.params.matchId },
           include: [User, Initiative]
         })
-        
+
         if (match) {
-          /*return res.status(200).json({data: Json.format(match)});*/
           return res.status(200).json({data: match});
         }
 

@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "Swagger"
+    "title": "Match4Action"
   },
   "host": "localhost:3000",
   "tags": [
@@ -215,6 +215,28 @@
         "description": "",
         "operationId": "getInitiatives",
         "produces": "application/json",
+        "responses": {}
+      }
+    },
+    "/initiatives/{initiativeId}": {
+      "get": {
+        "tags": [
+          "initiatives"
+        ],
+        "summary": "Get initiative",
+        "description": "Get one initiative.",
+        "operationId": "getInitiative",
+        "produces": "application/json",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "initiativeId",
+            "description": "ID of initiative to return",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
         "responses": {}
       }
     }

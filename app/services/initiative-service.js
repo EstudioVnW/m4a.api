@@ -42,7 +42,6 @@ module.exports = class Initiatives {
         })
         
         if (initiative) {
-          /*return res.status(200).json({data: Json.format(initiative)});*/
           return res.status(200).json({data: initiative});
         }
 

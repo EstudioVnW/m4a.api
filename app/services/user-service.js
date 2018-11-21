@@ -49,7 +49,6 @@ module.exports = class Users {
       try {
         const include = req.query.include
         if (include === 'matches') {
-          /*/users/1?include='matches'*/
           const user = await User.findOne({
             where: { id: req.params.userId },
             include: [Match]
