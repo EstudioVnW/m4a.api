@@ -13,7 +13,7 @@ const InitiativeJson = {
           country: iniative.country,
           city: iniative.city,
           address: iniative.address,
-          latlong: iniative.nr_latlong,
+          latlong: iniative.latlong,
           skills: iniative.skills,
           causes: iniative.causes,
           areas: iniative.areas,

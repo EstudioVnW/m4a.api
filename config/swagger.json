@@ -26,9 +26,8 @@
         ],
         "summary": "Create user",
         "description": "This can only be done by the logged in user.",
-        "produces": [
-          "application/json"
-        ],
+        "consumes": "application/json",
+        "produces": "application/json",
         "parameters": [
           {
             "in": "body",
@@ -48,9 +47,7 @@
         ],
         "summary": "Get a list of users",
         "description": "",
-        "produces": [
-          "application/json"
-        ],
+        "produces": "application/json",
         "responses": {}
       }
     },
@@ -62,12 +59,8 @@
         "summary": "Update an existing user",
         "description": "",
         "operationId": "updateUser",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": "application/json",
+        "produces": "application/json",
         "parameters": [
           {
             "in": "body",
@@ -106,9 +99,7 @@
         "summary": "Delete an existing user",
         "description": "",
         "operationId": "deleteUser",
-        "produces": [
-          "application/json"
-        ],
+        "produces": "application/json",
         "parameters": [
           {
             "in": "path",
@@ -130,6 +121,39 @@
             "description": "Exception"
           }
         }
+      }
+    },
+    "/initiatives": {
+      "post": {
+        "tags": [
+          "initiatives"
+        ],
+        "summary": "Create initiative",
+        "description": "This can only be done by the logged in initiative.",
+        "operationId": "createInitiative",
+        "produces": "application/json",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Created initiative object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Initiative"
+            }
+          }
+        ],
+        "responses": {}
+      },
+      "get": {
+        "tags": [
+          "initiatives"
+        ],
+        "summary": "Get a list of initiatives",
+        "description": "",
+        "operationId": "getInitiatives",
+        "produces": "application/json",
+        "responses": {}
       }
     }
   },
@@ -187,6 +211,65 @@
           "type": "string"
         },
         "userStatus": {
+          "type": "integer"
+        }
+      }
+    },
+    "Initiative": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "website": {
+          "type": "string"
+        },
+        "bio": {
+          "type": "string"
+        },
+        "birthday": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "avatar": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "latlong": {
+          "type": "string"
+        },
+        "skills": {
+          "type": "string"
+        },
+        "causes": {
+          "type": "string"
+        },
+        "areas": {
+          "type": "string"
+        },
+        "sdgs": {
+          "type": "string"
+        },
+        "eventType": {
+          "type": "string"
+        },
+        "start": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "finish": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "UserId": {
           "type": "integer"
         }
       }
