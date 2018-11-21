@@ -13,11 +13,14 @@ module.exports = {
         onDelete: 'CASCADE',
         allowNull: false
       },
-      InitativeId: {
+      InitiativeId: {
         type: DataTypes.INTEGER,
         references: { model: 'Initiatives', key: 'id' },
         onDelete: 'CASCADE',
         allowNull: false
+      },
+      matchStatus: {
+        type: DataTypes.BOOLEAN,
       },
       createdAt: {
         allowNull: false,
@@ -28,7 +31,14 @@ module.exports = {
         type: DataTypes.DATE,
       },
     });
-  },
+
+    queryInterface.addConstraint('Matches', [
+        'UserId', 'InitiativeId'
+      ],{
+        type: 'unique', name: 'uniqueUserAndInit'
+      })
+  
+},
 
   down: (queryInterface) => {
     queryInterface.dropTable('Matches');

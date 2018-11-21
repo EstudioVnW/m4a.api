@@ -1,5 +1,6 @@
 'use strict';
-const { User } = require('../../domain/entities');
+const { User, Match } = require('../../domain/entities');
+
 const Json = require('../responses/users');
 
 module.exports = class Users {
@@ -18,8 +19,10 @@ module.exports = class Users {
   findUsersList() {
     this.router.get('/users', async (req, res) => {
       try {
-        const users = await User.findAll().map(user => Json.format(user))
-        res.status(200).json({data: users})
+        res.status(200)
+          .json({
+            data: await User.findAll().map(user => Json.format(user))
+          })
       }
       catch (err) {
         res.status(500).json(err)
@@ -30,8 +33,10 @@ module.exports = class Users {
   createUser() {
     this.router.post('/users', async (req, res) => {
       try {
-        const user = await User.create(req.body)
-        res.status(200).json({data: Json.format(user)})
+        res.status(200)
+          .json({
+            data: Json.format(await User.create(req.body))
+          })
       }
       catch (err) {
         res.status(500).json(err)
@@ -42,13 +47,17 @@ module.exports = class Users {
   findUser() {
     this.router.get('/users/:userId', async (req, res) => {
       try {
-        const user = await User.find({ where: { id: req.params.userId } })
+        const user = await User.find({
+          where: { id: req.params.userId },
+          include: [Match]
+        })
+        
         if (user) {
-          res.status(200).json({data: Json.format(user)});
+          /*return res.status(200).json({data: Json.format(user)});*/
+          return res.status(200).json({data: user});
         }
-        else {
-          res.status(404).json({ message: 'Didn’t find anything here!' });
-        }
+
+        return res.status(404).json({ message: 'Didn’t find anything here!' });
       }
       catch (err) {
         res.status(500).json(err)
@@ -59,10 +68,8 @@ module.exports = class Users {
   updateUser() {
     this.router.put('/users/:userId', async (req, res) => {
       try {
-        const find = await User.find({ where: { id: req.params.userId } })
-        if (find) {
-          const update = await User.update(req.body, { where: { id: req.params.userId } })
-          if (update) {
+        if (await User.find({ where: { id: req.params.userId } })) {
+          if (await User.update(req.body, { where: { id: req.params.userId } })) {
             return res.status(201).json({ message: 'User has been updated.'});
           }
         }
@@ -77,10 +84,8 @@ module.exports = class Users {
   deleteUser() {
     this.router.delete('/users/:userId', async (req, res) => {
       try {
-        const find = await User.find({ where: { id: req.params.userId } })
-        if (find) {
-          const deleted = await User.destroy({ where: { id: req.params.userId } })
-          if (deleted) {
+        if (await User.find({ where: { id: req.params.userId } })) {
+          if (await User.destroy({ where: { id: req.params.userId } })) {
             return res.status(201).json({ message: 'User has been deleted.'});
           }
         }

@@ -1,5 +1,5 @@
 'use strict';
-const { Initiative } = require('../../domain/entities');
+const { Initiative, Match, User } = require('../../domain/entities');
 const Json = require('../responses/initiatives');
 
 module.exports = class Initiatives {
@@ -10,13 +10,43 @@ module.exports = class Initiatives {
   expose() {
     this.findInitiativesList();
     this.createInitiative();
+    this.findInitiative();
   }
 
   findInitiativesList() {
     this.router.get('/initiatives', async (req, res) => {
       try {
-        const initiatives = await Initiative.findAll().map(initiative => Json.format(initiative))
-        res.status(200).json(initiatives)
+        res.status(200)
+        .json({
+          data: await Initiative.findAll()
+            .map(initiative =>
+              Json.format(initiative)
+            )
+          })
+      }
+      catch (err) {
+        res.status(500).json(err)
+      }
+    });
+  }
+
+  findInitiative() {
+    this.router.get('/initiatives/:initiativeId', async (req, res) => {
+      try {
+        const initiative = await Initiative.findOne({
+          where: { id: req.params.initiativeId },
+          include: [{
+            model: Match,
+            include: [User]
+          }]
+        })
+        
+        if (initiative) {
+          /*return res.status(200).json({data: Json.format(initiative)});*/
+          return res.status(200).json({data: initiative});
+        }
+
+        return res.status(404).json({ message: 'Didn’t find anything here!' });
       }
       catch (err) {
         res.status(500).json(err)
@@ -27,8 +57,8 @@ module.exports = class Initiatives {
   createInitiative() {
     this.router.post('/initiatives', async (req, res) => {
       try {
-        const initiative = await Initiative.create(req.body)
-        res.status(200).json(Json.format(initiative))
+        res.status(200)
+          .json(Json.format(await Initiative.create(req.body)))
       }
       catch (err) {
         res.status(500).json(err)

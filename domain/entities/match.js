@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  return Match = sequelize.define("Match", {
+  const Match = sequelize.define("Match", {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -13,12 +13,25 @@ module.exports = (sequelize, DataTypes) => {
       referencesKey: 'id',
       allowNull: false
     },
-    InitativeId: {
+    InitiativeId: {
       type: DataTypes.INTEGER,
-      references: 'Initative',
+      references: 'Initiative',
       referencesKey: 'id',
       allowNull: false
     },
+    matchStatus: {
+      type: DataTypes.BOOLEAN
+    }
   });
+
+  Match.associate = models => {
+    Match.belongsTo(models.User, {
+      foreignKey: 'UserId',
+    })
+    Match.belongsTo(models.Initiative, {
+      foreignKey: 'InitiativeId',
+    })
+  }
+
   return Match;
 }

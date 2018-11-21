@@ -1,5 +1,5 @@
 'use strict';
-const { Match } = require('../../domain/entities');
+const { Match, User, Initiative } = require('../../domain/entities');
 const Json = require('../responses/users');
 
 module.exports = class Users {
@@ -10,13 +10,35 @@ module.exports = class Users {
   expose() {
     this.getMatches();
     this.createMatch();
+    this.findMatch();
   }
 
   getMatches() {
     this.router.get('/matchs', async (req, res) => {
       try {
-        const matches = await Match.findAll().map(match => match)
-        res.status(200).json(matches)
+        res.status(200)
+          .json({ data: await Match.findAll().map(match => match) })
+      }
+      catch (err) {
+        res.status(500).json(err)
+      }
+    });
+  }
+
+  findMatch() {
+    this.router.get('/matchs/:matchId', async (req, res) => {
+      try {
+        const match = await Match.find({
+          where: { id: req.params.matchId },
+          include: [User, Initiative]
+        })
+        
+        if (match) {
+          /*return res.status(200).json({data: Json.format(match)});*/
+          return res.status(200).json({data: match});
+        }
+
+        return res.status(404).json({ message: 'Didn’t find anything here!' });
       }
       catch (err) {
         res.status(500).json(err)
@@ -27,8 +49,8 @@ module.exports = class Users {
   createMatch() {
     this.router.post('/matchs', async (req, res) => {
       try {
-        const match = await Match.create(req.body)
-        res.status(200).json(match)
+        res.status(200)
+          .json({ data: await Match.create(req.body) })
       }
       catch (err) {
         res.status(500).json(err)

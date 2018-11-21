@@ -50,14 +50,14 @@ module.exports = {
       sdgs: {
         type: DataTypes.STRING,
       },
-      allowToRemote: {
-        type: DataTypes.INTEGER,
-      },
       userProfile: {
         type: DataTypes.STRING,
       },
+      allowToRemote: {
+        type: DataTypes.BOOLEAN,
+      },
       userStatus: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BOOLEAN,
       },
       createdAt: {
         allowNull: false,
