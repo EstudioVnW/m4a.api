@@ -239,6 +239,58 @@
         ],
         "responses": {}
       }
+    },
+    "/matchs": {
+      "post": {
+        "tags": [
+          "matchs"
+        ],
+        "summary": "Create a match between initiatives and users",
+        "operationId": "createMatch",
+        "produces": "application/json",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Created match object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Match"
+            }
+          }
+        ],
+        "responses": {}
+      },
+      "get": {
+        "tags": [
+          "matchs"
+        ],
+        "summary": "Get a list of matchs",
+        "operationId": "getMatchs",
+        "produces": "application/json",
+        "responses": {}
+      }
+    },
+    "/matchs/{matchId}": {
+      "get": {
+        "tags": [
+          "matchs"
+        ],
+        "summary": "Get initiative by matchId",
+        "operationId": "getMach",
+        "produces": "application/json",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "matchId",
+            "description": "ID of match to return",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {}
+      }
     }
   },
   "definitions": {
@@ -354,6 +406,20 @@
           "format": "date-time"
         },
         "UserId": {
+          "type": "integer"
+        }
+      }
+    },
+    "Match": {
+      "type": "object",
+      "properties": {
+        "UserId": {
+          "type": "integer"
+        },
+        "InitiativeId": {
+          "type": "integer"
+        },
+        "matchStatus": {
           "type": "integer"
         }
       }
