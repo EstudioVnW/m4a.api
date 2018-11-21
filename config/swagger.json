@@ -52,6 +52,36 @@
       }
     },
     "/users/{userId}": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Get an user by Id",
+        "description": "",
+        "operationId": "getUserById",
+        "produces": "application/json",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "description": "ID of user to return",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful operation"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Exception"
+          }
+        }
+      },
       "put": {
         "tags": [
           "users"
@@ -99,6 +129,38 @@
         "summary": "Delete an existing user",
         "description": "",
         "operationId": "deleteUser",
+        "produces": "application/json",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "description": "ID of user to return",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful operation"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Exception"
+          }
+        }
+      }
+    },
+    "/users/{userId}?include=matches": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Get an user and your matches",
+        "description": "",
+        "operationId": "getUserMatches",
         "produces": "application/json",
         "parameters": [
           {

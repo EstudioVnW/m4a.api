@@ -47,14 +47,24 @@ module.exports = class Users {
   findUser() {
     this.router.get('/users/:userId', async (req, res) => {
       try {
-        const user = await User.find({
+        const include = req.query.include
+        if (include === 'matches') {
+          /*/users/1?include='matches'*/
+          const user = await User.findOne({
+            where: { id: req.params.userId },
+            include: [Match]
+          })
+          if (user) {
+            return res.status(200).json({data: user});
+          }
+        }
+
+        const user = await User.findOne({
           where: { id: req.params.userId },
-          include: [Match]
         })
-        
+
         if (user) {
-          /*return res.status(200).json({data: Json.format(user)});*/
-          return res.status(200).json({data: user});
+          return res.status(200).json({data: Json.format(user)});
         }
 
         return res.status(404).json({ message: 'Didn’t find anything here!' });
@@ -68,7 +78,7 @@ module.exports = class Users {
   updateUser() {
     this.router.put('/users/:userId', async (req, res) => {
       try {
-        if (await User.find({ where: { id: req.params.userId } })) {
+        if (await User.findOne({ where: { id: req.params.userId } })) {
           if (await User.update(req.body, { where: { id: req.params.userId } })) {
             return res.status(201).json({ message: 'User has been updated.'});
           }
@@ -84,7 +94,7 @@ module.exports = class Users {
   deleteUser() {
     this.router.delete('/users/:userId', async (req, res) => {
       try {
-        if (await User.find({ where: { id: req.params.userId } })) {
+        if (await User.findOne({ where: { id: req.params.userId } })) {
           if (await User.destroy({ where: { id: req.params.userId } })) {
             return res.status(201).json({ message: 'User has been deleted.'});
           }
