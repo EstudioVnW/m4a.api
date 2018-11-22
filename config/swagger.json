@@ -276,8 +276,8 @@
         "tags": [
           "matchs"
         ],
-        "summary": "Get initiative by matchId",
-        "operationId": "getMach",
+        "summary": "Get match by matchId",
+        "operationId": "getMatch",
         "produces": "application/json",
         "parameters": [
           {
