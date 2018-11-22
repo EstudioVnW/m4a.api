@@ -28,7 +28,7 @@ module.exports = class Users {
   findMatch() {
     this.router.get('/matchs/:matchId', async (req, res) => {
       try {
-        const match = await Match.find({
+        const match = await Match.findOne({
           where: { id: req.params.matchId },
           include: [User, Initiative]
         })
