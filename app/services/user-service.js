@@ -1,6 +1,5 @@
 'use strict';
 const { User, Match } = require('../../domain/entities');
-
 const Json = require('../responses/users');
 
 module.exports = class Users {
@@ -45,12 +44,12 @@ module.exports = class Users {
   }
 
   findUser() {
-    this.router.get('/users/:userId', async (req, res) => {
+    this.router.get('/users/:email', async (req, res) => {
       try {
-        const include = req.query.include
+        const { include } = req.query;
         if (include === 'matches') {
           const user = await User.findOne({
-            where: { id: req.params.userId },
+            where: { email: req.params.email },
             include: [Match]
           })
           if (user) {
@@ -59,7 +58,7 @@ module.exports = class Users {
         }
 
         const user = await User.findOne({
-          where: { id: req.params.userId },
+          where: { email: req.params.email },
         })
 
         if (user) {

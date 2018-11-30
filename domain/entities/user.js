@@ -26,12 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: {
-          msg: "password can't be empty"
-        }
-      }
+      allowNull: false
     },
     bio: {
       type: DataTypes.STRING,
@@ -56,8 +51,8 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         isIn: {
-          args: [['org', 'people']],
-          msg: "userProfile must be an org or a people using lowercase"
+          args: [['Organization', 'Volunteer']],
+          msg: "userProfile must be an Organization or a Volunteer using lowercase"
         }
       }
     },
