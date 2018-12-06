@@ -1,5 +1,5 @@
 'use strict';
-const { login } = require('../../domain/auth');
+const { login, loggedUser } = require('../../domain/auth');
 
 module.exports = class Login {
   constructor(router) {
@@ -8,6 +8,7 @@ module.exports = class Login {
 
   expose() {
     this.getToken();
+    this.verifyToken();
   }
 
   getToken() {
@@ -15,6 +16,21 @@ module.exports = class Login {
       try {
         const {email} = req.body
         res.status(200).json({ data: await login(email)})
+      }
+      catch (err) {
+        console.log(err)
+        res.status(500).json(err)
+      }
+    });
+  }
+
+  verifyToken() {
+    this.router.get('/login/verify', async (req, res) => {
+      try {
+        const user = await loggedUser(req)
+        if (user) {
+          return res.status(200)
+        }
       }
       catch (err) {
         console.log(err)

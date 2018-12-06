@@ -24,9 +24,6 @@ module.exports = (sequelize, DataTypes) => {
         },
       }
     },
-    password: {
-      type: DataTypes.STRING
-    },
     bio: {
       type: DataTypes.STRING,
       len: {
@@ -37,6 +34,7 @@ module.exports = (sequelize, DataTypes) => {
     birthday: DataTypes.DATE,
     avatar: DataTypes.STRING,
     country: DataTypes.STRING,
+    state: DataTypes.STRING,
     city: DataTypes.STRING,
     address: DataTypes.STRING,
     latlong: DataTypes.STRING,

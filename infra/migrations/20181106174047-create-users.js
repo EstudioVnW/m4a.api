@@ -14,9 +14,6 @@ module.exports = {
         type: DataTypes.STRING,
         unique: true,
       },
-      password: {
-        type: DataTypes.STRING,
-      },
       bio: {
         type: DataTypes.STRING,
       },
@@ -27,6 +24,9 @@ module.exports = {
         type: DataTypes.STRING,
       },
       country: {
+        type: DataTypes.STRING,
+      },
+      state: {
         type: DataTypes.STRING,
       },
       city: {

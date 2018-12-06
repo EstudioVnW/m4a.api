@@ -1,7 +1,7 @@
 'use strict';
 const { Initiative, Match, User } = require('../../domain/entities');
 const Json = require('../responses/initiatives');
-const { requiresAuth } = require('../../domain/auth')
+const { loggedUser } = require('../../domain/auth')
 
 module.exports = class Initiatives {
   constructor(router) {
@@ -55,7 +55,7 @@ module.exports = class Initiatives {
   }
 
   createInitiative() {
-    this.router.use(requiresAuth).post('/initiatives', async (req, res) => {
+    this.router.post('/initiatives', async (req, res) => {
       try {
         res.status(200)
           .json(Json.format(await Initiative.create(req.body)))

@@ -2,6 +2,7 @@
 // basic configs
 const express = require('express');
 const bodyParser = require('body-parser');
+const { requiresAuth } = require('./domain/auth');
 
 // services
 const StatusService = require('./app/services/status-service');
@@ -35,6 +36,20 @@ class Server {
     });
     this.app.use(bodyParser.urlencoded({extended: true}));
     this.app.use(bodyParser.json());
+    this.app.use(requiresAuth([
+      {
+        path: '/users',
+        methods: ['POST']
+      },
+      {
+        path: '/login',
+        methods: ['POST']
+      },
+      {
+        path: '/login/verify',
+        methods: ['GET']
+      },
+    ]))
   }
 
   start () {

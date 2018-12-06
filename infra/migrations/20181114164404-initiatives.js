@@ -26,6 +26,9 @@ module.exports = {
       country: {
         type: DataTypes.STRING,
       },
+      state: {
+        type: DataTypes.STRING,
+      },
       city: {
         type: DataTypes.STRING,
       },
@@ -71,6 +74,11 @@ module.exports = {
         onDelete: 'SET NULL'
       },
     });
+
+    queryInterface.addIndex('Initiatives', [
+      'country', 'state', 'city'
+    ])
+
   },
 
   down: (queryInterface) => {

@@ -14,28 +14,40 @@ const login = async (email) => {
   });
 }
 
-const loggedUser = (token) => {
+const loggedUser = async (req) => {
   try {
-    return jwt.verify(token, secret);
+    const authorization = req.header('Authorization')
+    const token = authorization.replace('Bearer ', '')
+    const info = jwt.verify(token, secret);
+    return await User.findOne({
+      where: { email: info.email }, raw: true,
+    })
   }
-  catch(err) {
-    throw err
+  catch (err) {
+    return undefined
   }
 }
 
-const requiresAuth = (req, res, next) => {
-  const authorization = req.header('Authorization')
-  if (!authorization) {
-    return res.status(401).json({ message: 'No authorization header found' });
-  }
-  try {
-    const token = authorization.replace('Bearer ', '')
-    jwt.verify(token, secret);
-    next()
-  }
-  catch(err) {
-    return res.status(401).json({ message: 'Invalid token' });
+const requiresAuth = (allowedRoutes) => {
+  return (req, res, next) => {
+    const url = allowedRoutes.find(item => item.path === req.originalUrl)
+    if (url && url.methods.includes(req.method)) {
+      return next()
+    }
+    const authorization = req.header('Authorization')
+    if (!authorization) {
+      return res.status(401).json({ message: 'No authorization header found' });
+    }
+    try {
+      const token = authorization.replace('Bearer ', '')
+      jwt.verify(token, secret);
+      next()
+    }
+    catch (err) {
+      return res.status(401).json({ message: 'Invalid token' });
+    }
   }
 }
+
 
 module.exports = { login, loggedUser, requiresAuth };
