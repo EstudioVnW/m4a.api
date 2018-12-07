@@ -7,6 +7,9 @@ const login = async (email) => {
   const user = await User.findOne({
     where: { email: email },
   })
+  if (!user) {
+    return undefined
+  }
   return jwt.sign({
     email: user.email },
     secret, {
