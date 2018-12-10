@@ -1,57 +1,62 @@
-'use strict';
+"use strict"
+
 const { Initiative } = require('../../domain/entities');
 
-const queryCity = (currentUser) =>
- `select * from Initiatives
-  where country = '${currentUser.country}'
-  and state = '${currentUser.state}'
-  and city = '${currentUser.city}'`
+const createQuery = ({ country, state, city }) => {
+  if (city) {
+    return `select * from Initiatives
+            where country = '${country}'
+            and state = '${state}'
+            and city = '${city}'`
+  }
+  if (state) {
+    return `select * from Initiatives
+            where country = '${country}'
+            and state = '${state}'`
+  }
+  if (country) {
+    return `select * from Initiatives
+            where country = '${country}'`
+  }
+  return `select * from Initiatives`
+}
 
-const queryState = (currentUser) =>
- `select * from Initiatives
-  where country = '${currentUser.country}'
-  and state = '${currentUser.state}'`
+const searchNearestInitiatives = async ({ country, state, city }) => {
+  const query = createQuery({ country, state, city })
 
-const queryCountry = (currentUser) =>
- `select * from Initiatives
-  where country = '${currentUser.country}'`
+  let result = await Initiative.sequelize.query(query, {
+    raw: true
+  })
+
+  // city not found? search again
+  if (result[0].length === 0 && city != null) {
+    result = await searchNearestInitiatives({ country, state, city: null })
+  }
+
+  // state not found? search again
+  if (result[0].length === 0 && state != null) {
+    result = await searchNearestInitiatives({ country, state: null, city: null })
+  }
+
+  // country not found? search again
+  if (result[0].length === 0 && country != null) {
+    result = await searchNearestInitiatives({
+      country: null,
+      state: null,
+      city: null
+    })
+  }
+  // nothing found? return universe :)
+  return result
+}
 
 module.exports = class InitiativeRepository {
   async findNearest(currentUser) {
-    try {
-      // tem país, estado e cidade
-      let result = await Initiative.sequelize.query(
-        queryCity(currentUser), 
-        {
-          raw: true
-        }
-      )
-      if (result[0].length === 0) {
-        // tem país, estado?
-        result = await Initiative.sequelize.query(
-        queryState(currentUser), 
-        {
-          raw: true
-        }
-      )}
-      if (result[0].length === 0) {
-        // tem país?
-        result = await Initiative.sequelize.query(
-        queryCountry(currentUser), 
-        {
-          raw: true
-        }
-      )}
-      if (result[0].length === 0) {
-        // tem no planeta ?
-        return await Initiative.findAll({raw: true})
-      }
-      console.log(result)
-      return result[0]
-    }
-
-    catch (err) {
-      throw err;
-    }
+    const result = await searchNearestInitiatives({
+      country: currentUser.country,
+      state: currentUser.state,
+      city: currentUser.city
+    })
+    return result[0]
   }
-};
+}

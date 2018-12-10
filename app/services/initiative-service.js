@@ -21,7 +21,6 @@ module.exports = class Initiatives {
     this.router.get('/initiatives', async (req, res) => {
       try {
         if (req.query.nearest) {
-          console.log(InitiativeRepository)
           const result = await InitiativeRepository.findNearest(await loggedUser(req))
           return res.status(200).json({
             data: result.map(initiative =>
