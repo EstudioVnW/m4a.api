@@ -1,5 +1,7 @@
 'use strict';
 const { Initiative, Match, User } = require('../../domain/entities');
+const { InitiativeRepository } = require('../../domain/repositories');
+
 const Json = require('../responses/initiatives');
 const { loggedUser } = require('../../domain/auth')
 
@@ -14,11 +16,20 @@ module.exports = class Initiatives {
     this.findInitiative();
   }
 
+  // nearest
   findInitiativesList() {
     this.router.get('/initiatives', async (req, res) => {
       try {
-        res.status(200)
-        .json({
+        if (req.query.nearest) {
+          console.log(InitiativeRepository)
+          const result = await InitiativeRepository.findNearest(await loggedUser(req))
+          return res.status(200).json({
+            data: result.map(initiative =>
+              Json.format(initiative)
+            )
+          })
+        }
+        return res.status(200).json({
           data: await Initiative.findAll()
             .map(initiative =>
               Json.format(initiative)
@@ -26,6 +37,7 @@ module.exports = class Initiatives {
           })
       }
       catch (err) {
+        console.log(err)
         res.status(500).json(err)
       }
     });

@@ -10,6 +10,7 @@ const InitiativeJson = {
         birthday: iniative.birthday,
         avatar: iniative.avatar,
         country: iniative.country,
+        state: iniative.state,
         city: iniative.city,
         address: iniative.address,
         latlong: iniative.latlong,

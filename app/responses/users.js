@@ -11,6 +11,7 @@ const UserJson = {
         birthday: user.birthday,
         avatar: user.avatar,
         country: user.country,
+        state: user.state,
         city: user.city,
         address: user.address,
         latlong: user.latlong,
