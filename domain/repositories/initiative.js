@@ -2,27 +2,31 @@
 
 const { Initiative } = require('../../domain/entities');
 
-const createQuery = ({ country, state, city }) => {
+const createQuery = ({ country, state, city, UserId }) => {
   if (city) {
     return `select * from Initiatives
             where country = '${country}'
             and state = '${state}'
-            and city = '${city}'`
+            and city = '${city}'
+            and UserId <> '${UserId}'`
   }
+
   if (state) {
     return `select * from Initiatives
             where country = '${country}'
-            and state = '${state}'`
+            and state = '${state}'
+            and UserId <> '${UserId}'`
   }
   if (country) {
     return `select * from Initiatives
-            where country = '${country}'`
+            where country = '${country}
+            and UserId <> '${UserId}'`
   }
   return `select * from Initiatives`
 }
 
-const searchNearestInitiatives = async ({ country, state, city }) => {
-  const query = createQuery({ country, state, city })
+const searchNearestInitiatives = async ({ country, state, city, UserId }) => {
+  const query = createQuery({ country, state, city, UserId})
 
   let result = await Initiative.sequelize.query(query, {
     raw: true
@@ -55,7 +59,8 @@ module.exports = class InitiativeRepository {
     const result = await searchNearestInitiatives({
       country: currentUser.country,
       state: currentUser.state,
-      city: currentUser.city
+      city: currentUser.city,
+      UserId: currentUser.id
     })
     return result[0]
   }

@@ -1,5 +1,5 @@
 'use strict';
-const { User, Match } = require('../../domain/entities');
+const { User, Match, Initiative } = require('../../domain/entities');
 const Json = require('../responses/users');
 
 module.exports = class Users {
@@ -51,6 +51,16 @@ module.exports = class Users {
           const user = await User.findOne({
             where: { email: req.params.email },
             include: [Match]
+          })
+          if (user) {
+            return res.status(200).json({data: user});
+          }
+        }
+
+        if (include === 'initiatives') {
+          const user = await User.findOne({
+            where: { email: req.params.email },
+            include: [Initiative]
           })
           if (user) {
             return res.status(200).json({data: user});

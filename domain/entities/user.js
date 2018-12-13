@@ -69,7 +69,9 @@ module.exports = (sequelize, DataTypes) => {
     User.hasMany(models.Match, {
       foreignKey: 'UserId',
     })
+    User.hasMany(models.Initiative, {
+      foreignKey: 'UserId',
+    })
   }
-
   return User;
 }
