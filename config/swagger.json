@@ -14,8 +14,8 @@
       "description": "Operations about initiatives"
     },
     {
-      "name": "matchs",
-      "description": "Operations about matchs"
+      "name": "auth",
+      "description": "Operations about auth"
     }
   ],
   "securityDefinitions": {
@@ -62,7 +62,6 @@
         ],
         "summary": "Get a list of users",
         "description": "",
-        "produces": "application/json",
         "responses": {}
       }
     },
@@ -79,7 +78,6 @@
         "summary": "Get an user by email",
         "description": "",
         "operationId": "getUserByEmail",
-        "produces": "application/json",
         "parameters": [
           {
             "in": "path",
@@ -157,7 +155,6 @@
         "summary": "Delete an existing user",
         "description": "",
         "operationId": "deleteUser",
-        "produces": "application/json",
         "parameters": [
           {
             "in": "path",
@@ -194,7 +191,6 @@
         "summary": "Get an user and your initiatives",
         "description": "",
         "operationId": "getUserInitiatives",
-        "produces": "application/json",
         "parameters": [
           {
             "in": "path",
@@ -229,7 +225,6 @@
         "summary": "Create initiative",
         "description": "This can only be done by the logged in initiative.",
         "operationId": "createInitiative",
-        "produces": "application/json",
         "parameters": [
           {
             "in": "body",
@@ -255,7 +250,6 @@
         "summary": "Get a list of initiatives",
         "description": "",
         "operationId": "getInitiatives",
-        "produces": "application/json",
         "responses": {}
       }
     },
@@ -272,7 +266,41 @@
         "summary": "Get a list of near initiatives",
         "description": "",
         "operationId": "getInitiativesNearest",
-        "produces": "application/json",
+        "responses": {}
+      }
+    },
+    "/login/verify": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Verify user auth by token",
+        "operationId": "verifyToken",
+        "responses": {}
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Create user auth by token",
+        "operationId": "createToken",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Auth"
+            }
+          }
+        ],
         "responses": {}
       }
     }
@@ -287,9 +315,6 @@
         "email": {
           "type": "string"
         },
-        "password": {
-          "type": "string"
-        },
         "bio": {
           "type": "string"
         },
@@ -301,6 +326,9 @@
           "type": "string"
         },
         "country": {
+          "type": "string"
+        },
+        "state": {
           "type": "string"
         },
         "city": {
@@ -357,6 +385,9 @@
         "country": {
           "type": "string"
         },
+        "state": {
+          "type": "string"
+        },
         "city": {
           "type": "string"
         },
@@ -394,17 +425,11 @@
         }
       }
     },
-    "Match": {
+    "Auth": {
       "type": "object",
       "properties": {
-        "UserId": {
-          "type": "integer"
-        },
-        "InitiativeId": {
-          "type": "integer"
-        },
-        "matchStatus": {
-          "type": "integer"
+        "email": {
+          "type": "string"
         }
       }
     }
