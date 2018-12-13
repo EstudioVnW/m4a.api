@@ -8,7 +8,6 @@ const { requiresAuth } = require('./domain/auth');
 const StatusService = require('./app/services/status-service');
 const UserService = require('./app/services/user-service');
 const InitiativeService = require('./app/services/initiative-service.js');
-const MatchService = require('./app/services/match-service');
 const Login = require('./app/services/auth-service');
 
 const port = 3000
@@ -38,32 +37,34 @@ class Server {
     this.app.use(bodyParser.json());
     this.app.use(requiresAuth([
       {
+        path: '/',
+        methods: ['GET']
+      },
+      {
         path: '/users',
         methods: ['POST']
       },
-      {
+        {
         path: '/login',
         methods: ['POST']
       },
       {
         path: '/login/verify',
         methods: ['GET']
-      },
-    ]))
-  }
-
+      }
+    ])
+  )}
   start () {
     // services
     new StatusService(this.router).expose();
     new UserService(this.router).expose();
     new InitiativeService(this.router).expose();
-    new MatchService(this.router).expose();
     new Login(this.router).expose();
 
     // configs and start
     this.app.enable('trust proxy');
     this.app.use('/', this.router);
-    this.app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
+    this.app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     this.app.listen(port, () => {
       console.log(`Readyy! http://localhost:${port}/`);
     });

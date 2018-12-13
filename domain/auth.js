@@ -33,6 +33,7 @@ const loggedUser = async (req) => {
 
 const requiresAuth = (allowedRoutes) => {
   return (req, res, next) => {
+    if(req.originalUrl.includes('docs')) return next()
     const url = allowedRoutes.find(item => item.path === req.originalUrl)
     if (url && url.methods.includes(req.method)) {
       return next()

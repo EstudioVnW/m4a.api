@@ -18,13 +18,6 @@
       "description": "Operations about matchs"
     }
   ],
-  "securityDefinitions": {
-    "Bearer": {
-      "type": "apiKey",
-      "name": "Authorization",
-      "in": "header"
-    }
-  },
   "paths": {
     "/users": {
       "post": {
@@ -38,6 +31,8 @@
         ],
         "summary": "Create user",
         "description": "This can only be done by the logged in user.",
+        "consumes": "application/json",
+        "produces": "application/json",
         "parameters": [
           {
             "in": "body",
@@ -66,7 +61,7 @@
         "responses": {}
       }
     },
-    "/users/{email}": {
+    "/users/{userId}": {
       "get": {
         "tags": [
           "users"
@@ -76,16 +71,18 @@
             "Bearer": []
           }
         ],
-        "summary": "Get an user by email",
+        "summary": "Get an user by Id",
         "description": "",
-        "operationId": "getUserByEmail",
+        "operationId": "getUserById",
         "produces": "application/json",
         "parameters": [
           {
             "in": "path",
-            "name": "email",
-            "description": "Email of user to return",
-            "required": true
+            "name": "userId",
+            "description": "ID of user to return",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
           }
         ],
         "responses": {
@@ -99,9 +96,7 @@
             "description": "Exception"
           }
         }
-      }
-    },
-    "/users/{userId}": {
+      },
       "put": {
         "tags": [
           "users"
@@ -114,6 +109,8 @@
         "summary": "Update an existing user",
         "description": "",
         "operationId": "updateUser",
+        "consumes": "application/json",
+        "produces": "application/json",
         "parameters": [
           {
             "in": "body",
@@ -181,7 +178,7 @@
         }
       }
     },
-    "/users/{email}?include=initiatives": {
+    "/users/{userId}?include=matches": {
       "get": {
         "tags": [
           "users"
@@ -191,16 +188,18 @@
             "Bearer": []
           }
         ],
-        "summary": "Get an user and your initiatives",
+        "summary": "Get an user and your matches",
         "description": "",
-        "operationId": "getUserInitiatives",
+        "operationId": "getUserMatches",
         "produces": "application/json",
         "parameters": [
           {
             "in": "path",
-            "name": "email",
-            "description": "Email of user to return",
-            "required": true
+            "name": "userId",
+            "description": "ID of user to return",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
           }
         ],
         "responses": {
@@ -220,11 +219,6 @@
       "post": {
         "tags": [
           "initiatives"
-        ],
-        "security": [
-          {
-            "Bearer": []
-          }
         ],
         "summary": "Create initiative",
         "description": "This can only be done by the logged in initiative.",
@@ -247,11 +241,6 @@
         "tags": [
           "initiatives"
         ],
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
         "summary": "Get a list of initiatives",
         "description": "",
         "operationId": "getInitiatives",
@@ -259,20 +248,77 @@
         "responses": {}
       }
     },
-    "/initiatives?nearest=true": {
+    "/initiatives/{initiativeId}": {
       "get": {
         "tags": [
           "initiatives"
         ],
-        "security": [
+        "summary": "Get initiative",
+        "description": "Get one initiative.",
+        "operationId": "getInitiative",
+        "produces": "application/json",
+        "parameters": [
           {
-            "Bearer": []
+            "in": "path",
+            "name": "initiativeId",
+            "description": "ID of initiative to return",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
           }
         ],
-        "summary": "Get a list of near initiatives",
-        "description": "",
-        "operationId": "getInitiativesNearest",
+        "responses": {}
+      }
+    },
+    "/matchs": {
+      "post": {
+        "tags": [
+          "matchs"
+        ],
+        "summary": "Create a match between initiatives and users",
+        "operationId": "createMatch",
         "produces": "application/json",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Created match object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Match"
+            }
+          }
+        ],
+        "responses": {}
+      },
+      "get": {
+        "tags": [
+          "matchs"
+        ],
+        "summary": "Get a list of matchs",
+        "operationId": "getMatchs",
+        "produces": "application/json",
+        "responses": {}
+      }
+    },
+    "/matchs/{matchId}": {
+      "get": {
+        "tags": [
+          "matchs"
+        ],
+        "summary": "Get match by matchId",
+        "operationId": "getMatch",
+        "produces": "application/json",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "matchId",
+            "description": "ID of match to return",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
         "responses": {}
       }
     }

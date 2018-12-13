@@ -47,16 +47,6 @@ module.exports = class Users {
     this.router.get('/users/:email', async (req, res) => {
       try {
         const { include } = req.query;
-        if (include === 'matches') {
-          const user = await User.findOne({
-            where: { email: req.params.email },
-            include: [Match]
-          })
-          if (user) {
-            return res.status(200).json({data: user});
-          }
-        }
-
         if (include === 'initiatives') {
           const user = await User.findOne({
             where: { email: req.params.email },
