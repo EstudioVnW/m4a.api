@@ -12,8 +12,3 @@ node_modules/.bin/sequelize db:migrate
 ```
 npm run watch
 ```
-
-if you want to use docker:
-```
-docker-compose up
-```
