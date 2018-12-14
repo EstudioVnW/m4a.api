@@ -1,6 +1,6 @@
 ## install
 ```
-npm install
+yarn install
 ```
 
 ## migrate

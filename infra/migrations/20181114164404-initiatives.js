@@ -1,74 +1,75 @@
+'use strict';
 module.exports = {
-  up: (queryInterface, DataTypes) => {
-    queryInterface.createTable('Initiatives', {
+  up: (queryInterface, Sequelize) => {
+    return queryInterface.createTable('Initiatives', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: DataTypes.INTEGER,
+        type: Sequelize.INTEGER,
       },
       name: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
         unique: true,
       },
       website: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
       },
       bio: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
       },
       birthday: {
-        type: DataTypes.DATE,
+        type: Sequelize.DATE,
       },
       avatar: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
       },
       country: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
       },
       state: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
       },
       city: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
       },
       address: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
       },
       latlong: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
       },
       skills: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
       },
       causes: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
       },
       areas: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
       },
       sdgs: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
       },
       eventType: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
       },
       start: {
-        type: DataTypes.DATE,
+        type: Sequelize.DATE,
       },
       finish: {
-        type: DataTypes.DATE,
+        type: Sequelize.DATE,
       },
       createdAt: {
         allowNull: false,
-        type: DataTypes.DATE,
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: DataTypes.DATE,
+        type: Sequelize.DATE,
       },
       UserId: {
-        type: DataTypes.INTEGER,
+        type: Sequelize.INTEGER,
         references: { model: 'Users', key: 'id' },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
@@ -82,6 +83,6 @@ module.exports = {
   },
 
   down: (queryInterface) => {
-    queryInterface.dropTable('Initiatives');
+    return queryInterface.dropTable('Initiatives');
   }
 };
