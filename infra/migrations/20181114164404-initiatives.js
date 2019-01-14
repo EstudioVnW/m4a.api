@@ -39,6 +39,9 @@ module.exports = {
       latlong: {
         type: Sequelize.GEOMETRY('POINT', 4326),
       },
+      zipcode: {
+        type: Sequelize.STRING,
+      },
       skills: {
         type: Sequelize.STRING,
       },
@@ -61,11 +64,9 @@ module.exports = {
         type: Sequelize.DATE,
       },
       createdAt: {
-        allowNull: false,
         type: Sequelize.DATE,
       },
       updatedAt: {
-        allowNull: false,
         type: Sequelize.DATE,
       },
       UserId: {

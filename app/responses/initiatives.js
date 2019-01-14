@@ -13,6 +13,7 @@ const InitiativeJson = {
         state: iniative.state,
         city: iniative.city,
         address: iniative.address,
+        zipcode: user.latlong,
         latlong: iniative.latlong,
         skills: iniative.skills,
         causes: iniative.causes,

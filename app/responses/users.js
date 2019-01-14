@@ -6,7 +6,7 @@ const UserJson = {
       attributes: {
         username: user.username,
         email: user.email,
-        password: user.password,
+        userProfile: user.userProfile,
         bio: user.bio,
         birthday: user.birthday,
         avatar: user.avatar,
@@ -14,13 +14,9 @@ const UserJson = {
         state: user.state,
         city: user.city,
         address: user.address,
+        zipcode: user.zipcode,
         latlong: user.latlong,
-        skills: user.skills,
-        causes: user.causes,
-        areas: user.areas,
-        sdgs: user.sdgs,
         allowToRemote: user.allowToRemote,
-        userProfile: user.userProfile,
         userStatus: user.userStatus,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt

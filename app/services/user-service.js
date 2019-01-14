@@ -1,5 +1,5 @@
 'use strict';
-const { User, Match, Initiative } = require('../../domain/entities');
+const { User, Match, Initiative, UserInterest } = require('../../domain/entities');
 const Json = require('../responses/users');
 
 module.exports = class Users {

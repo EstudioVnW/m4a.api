@@ -38,10 +38,7 @@ module.exports = (sequelize, DataTypes) => {
     city: DataTypes.STRING,
     address: DataTypes.STRING,
     latlong: DataTypes.GEOMETRY('POINT', 4326),
-    skills: DataTypes.STRING,
-    causes: DataTypes.STRING,
-    areas: DataTypes.STRING,
-    sdgs: DataTypes.STRING,
+    zipcode: DataTypes.STRING,
     allowToRemote: DataTypes.INTEGER,
     userProfile: {
       type: DataTypes.STRING,
@@ -64,6 +61,12 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
   });
+
+  User.associate = models => {
+    User.hasMany(models.UserInterest, {
+      foreignKey: 'UserId',
+    })
+  }
 
   User.associate = models => {
     User.hasMany(models.Initiative, {
