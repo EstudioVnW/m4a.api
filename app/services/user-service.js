@@ -34,7 +34,9 @@ module.exports = class Users {
       try {
         res.status(200)
           .json({
-            data: Json.format(await User.create(req.body))
+            data: Json.format(
+              await User.create(req.body)
+            )
           })
       }
       catch (err) {
