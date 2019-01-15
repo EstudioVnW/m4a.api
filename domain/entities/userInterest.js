@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const UserInterest = sequelize.define('UserInterest', {
+  const UserInterests = sequelize.define('UserInterests', {
     interestDescription: DataTypes.STRING,
     interestType: {
       type: DataTypes.STRING,
@@ -22,9 +22,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   });
 
-  UserInterest.associate = models => {
-    UserInterest.belongsTo(models.User);
+  UserInterests.associate = models => {
+    UserInterests.belongsTo(models.User);
   };
 
-  return UserInterest;
+  return UserInterests;
 }
