@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         isIn: {
-          args: [['skill', 'cause', 'area', 'sdg']],
+          args: [['Areas', 'Causes',  'SDG', 'Skills']],
           msg: "interestType must be a 'skill', 'cause', 'area' or 'sdg'"
         }
       }

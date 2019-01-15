@@ -20,8 +20,7 @@ module.exports = class Users {
       try {
         const { include } = req.query;
         if (include === 'user-interests') {
-          return res.status(200)
-            .json({
+          return res.status(200).json({
               data: await User.findAll({
               include: [UserInterests]
             })
@@ -40,8 +39,11 @@ module.exports = class Users {
   createUser() {
     this.router.post('/users', async (req, res) => {
       try {
-        res.status(200)
-          .json({ data: Json.format(await User.create(req.body))})
+        res.status(200).json({
+          data: await User.create(
+            req.body, { include: [UserInterests] }
+          )
+        })
       }
       catch (err) {
         res.status(500).json(err)
