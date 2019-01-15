@@ -16,27 +16,30 @@ module.exports = class Initiatives {
     this.findInitiative();
   }
 
-  // nearest
   findInitiativesList() {
     this.router.get('/initiatives', async (req, res) => {
       try {
+        // nearest
         if (req.query.nearest) {
           const result = await InitiativeRepository.findNearest(await loggedUser(req))
           return res.status(200).json({
-            data: result.map(initiative =>
-              Json.format(initiative)
-            )
+            data: result.map(initiative => Json.format(initiative))
           })
         }
-        return res.status(200).json({
-          data: await Initiative.findAll()
-            .map(initiative =>
-              Json.format(initiative)
-            )
+        // initiatives-interests
+        if (req.query.include === 'initiatives-interests') {
+          return res.status(200).json({
+              data: await Initiative.findAll({
+              include: [InitiativesInterests]
+            })
           })
+        }
+
+        return res.status(200).json({
+          data: await Initiative.findAll().map(initiative => Json.format(initiative))
+        })
       }
       catch (err) {
-        console.log(err)
         res.status(500).json(err)
       }
     });
@@ -69,9 +72,7 @@ module.exports = class Initiatives {
     this.router.post('/initiatives', async (req, res) => {
       try {
         res.status(200).json({
-          data: await Initiative.create(
-            req.body, { include: [InitiativesInterests] }
-          )
+          data: await Initiative.create(req.body, { include: [InitiativesInterests] })
         })
       }
       catch (err) {

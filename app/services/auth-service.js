@@ -15,15 +15,14 @@ module.exports = class Login {
   getToken() {
     this.router.post('/login', async (req, res) => {
       try {
-        const {email} = req.body
+        const { email } = req.body
         const token = await login(email)
         if (token) {
-          return res.status(200).json({ data: token})
+          return res.status(200).json({ data: token })
         }
         return res.status(404).json({ message: 'Didn’t find anything here!'})
       }
       catch (err) {
-        console.log(err)
         res.status(500).json(err)
       }
     });
@@ -34,12 +33,11 @@ module.exports = class Login {
       try {
         const user = await loggedUser(req)
         if (user) {
-          return res.status(200).json({data: Json.format(user)});
+          return res.status(200).json({ data: Json.format(user) });
         }
         return res.status(401).end()
       }
       catch (err) {
-        console.log(err)
         return res.status(500).json(err)
       }
     });

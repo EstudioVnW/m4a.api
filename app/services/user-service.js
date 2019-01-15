@@ -70,7 +70,7 @@ module.exports = class Users {
         })
 
         if (user) {
-          return res.status(200).json({data: Json.format(user)});
+          return res.status(200).json({ data: Json.format(user) });
         }
 
         return res.status(404).json({ message: 'Didn’t find anything here!' });
