@@ -1,5 +1,5 @@
 'use strict';
-const { User, Match, Initiative, UserInterests } = require('../../domain/entities');
+const { User, Match, Initiative, UsersInterests } = require('../../domain/entities');
 const Json = require('../responses/users');
 
 module.exports = class Users {
@@ -19,10 +19,10 @@ module.exports = class Users {
     this.router.get('/users', async (req, res) => {
       try {
         const { include } = req.query;
-        if (include === 'user-interests') {
+        if (include === 'users-interests') {
           return res.status(200).json({
               data: await User.findAll({
-              include: [UserInterests]
+              include: [UsersInterests]
             })
           })
         }
@@ -41,7 +41,7 @@ module.exports = class Users {
       try {
         res.status(200).json({
           data: await User.create(
-            req.body, { include: [UserInterests] }
+            req.body, { include: [UsersInterests] }
           )
         })
       }

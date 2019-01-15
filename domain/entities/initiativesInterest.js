@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const UserInterests = sequelize.define('UserInterests', {
+  const InitiativesInterests = sequelize.define('InitiativesInterests', {
     interestDescription: DataTypes.STRING,
     interestType: {
       type: DataTypes.STRING,
@@ -11,20 +11,20 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
-    UserId: {
+    InitiativeId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       validate: {
         notEmpty: {
-          msg: "UserId can't be empty"
+          msg: "InitiativeId can't be empty"
         }
       }
     }
   });
 
-  UserInterests.associate = models => {
-    UserInterests.belongsTo(models.User);
+  InitiativesInterests.associate = models => {
+    InitiativesInterests.belongsTo(models.Initiative);
   };
 
-  return UserInterests;
+  return InitiativesInterests;
 }

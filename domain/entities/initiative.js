@@ -35,10 +35,6 @@ module.exports = (sequelize, DataTypes) => {
     address: DataTypes.STRING,
     latlong: DataTypes.GEOMETRY('POINT', 4326),
     zipcode: DataTypes.STRING,
-    skills: DataTypes.STRING,
-    causes: DataTypes.STRING,
-    areas: DataTypes.STRING,
-    sdgs: DataTypes.STRING,
     eventType: {
       type: DataTypes.STRING,
       validate: {
@@ -63,6 +59,9 @@ module.exports = (sequelize, DataTypes) => {
 
   Initiative.associate = models => {
     Initiative.belongsTo(models.User);
+    Initiative.hasMany(models.InitiativesInterests, {
+      foreignKey: 'InitiativeId',
+    });
   };
 
   return Initiative;
