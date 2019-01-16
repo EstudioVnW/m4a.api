@@ -7,7 +7,7 @@ const expect = chai.expect;
 
 describe('Create a new user', () => {
 
-  const newUser = {
+  let user = {
       "username": "dalinha",
       "email": "dali6@gmial.com",
       "latlong": {
@@ -31,7 +31,7 @@ describe('Create a new user', () => {
     chai.request(server.app)
       .post('/users')
       .set('content-type', 'application/json')
-      .send(newUser)
+      .send(user)
       .end((err, res, body) => {
         if (err) {
           done(err);
@@ -50,7 +50,7 @@ describe('Create a new user', () => {
       .post('/login')
       .set('content-type', 'application/json')
       .send({
-        "email": newUser.email
+        "email": user.email
       })
       .end((err, res, body) => {
         if (err) {
