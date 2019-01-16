@@ -30,8 +30,9 @@ class Server {
         'Origin, X-Requested-With,Content-Type,Accept, Authorization');
       next();
     });
-    this.app.use(bodyParser.urlencoded({extended: true}));
+    this.app.enable('trust proxy');
     this.app.use(bodyParser.json());
+    this.app.use(bodyParser.urlencoded({extended: true}));
     this.app.use(requiresAuth([
       {
         path: '/',
@@ -52,14 +53,11 @@ class Server {
     ])
   )}
   start () {
-    // services
     new StatusService(this.router).expose();
     new UserService(this.router).expose();
     new InitiativeService(this.router).expose();
     new Login(this.router).expose();
 
-    // configs and start
-    this.app.enable('trust proxy');
     this.app.use('/', this.router);
     this.app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     this.app.listen(port, () => {
@@ -73,3 +71,5 @@ const api = new Server();
 
 api.setup();
 api.start();
+
+module.exports = api;
