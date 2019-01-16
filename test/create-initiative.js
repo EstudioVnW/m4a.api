@@ -10,7 +10,7 @@ describe('Create a new initiative', () => {
   let token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRhbGlAZ21pYWwuY29tIiwiaWF0IjoxNTQ3NjU5ODkyLCJleHAiOjE1NDgyNjQ2OTJ9.4z3XN0h9lLc4UOWp1V8B12Zytw6k9OVV8szF8i2ATA8'
 
   let initiative = {
-    "name": "educap",
+    "name": "educap1",
     "UserId": 1,
     "latlong": {
         "type": "Point",

@@ -9,7 +9,7 @@ describe('Create a new user', () => {
 
   let user = {
       "username": "dalinha",
-      "email": "dali9@gmial.com",
+      "email": "dali10@gmial.com",
       "latlong": {
         "type": "Point",
         "coordinates": [
