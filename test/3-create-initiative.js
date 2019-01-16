@@ -10,7 +10,7 @@ describe('Create a new initiative', () => {
 
   let initiative = {
     "name": "vainawebinho1",
-    "UserId": 16,
+    "UserId": 1,
       "latlong": {
         "type": "Point",
         "coordinates": [
