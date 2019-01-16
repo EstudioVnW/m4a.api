@@ -6,8 +6,8 @@
   "scripts": {
     "development": "node index.js",
     "start": "node index.js",
-    "test": "mocha",
-    "watch": "nodemon index.js"
+    "test": "NODE_ENV=test mocha",
+    "watch": "NODE_ENV=test nodemon index.js"
   },
   "author": "",
   "license": "ISC",

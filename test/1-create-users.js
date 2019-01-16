@@ -8,8 +8,8 @@ const expect = chai.expect;
 describe('Create a new user', () => {
 
   let user = {
-      "username": "dalinha",
-      "email": "dali10@gmial.com",
+      "username": "dalinha2",
+      "email": "dali11@gmial.com",
       "latlong": {
         "type": "Point",
         "coordinates": [
