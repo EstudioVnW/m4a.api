@@ -12,3 +12,9 @@ node_modules/.bin/sequelize db:migrate
 ```
 npm run watch
 ```
+
+## test
+
+```
+npm run test
+```
