@@ -35,7 +35,7 @@ const firebaseStorage = new Storage({
 
 const bucket = firebaseStorage.bucket(bucketName);
 
-const uploadFile = async (file) => {
+const uploadAvatar = async (file) => {
   try {
     const storageFile = await bucket.upload(file.path, {
       destination: `user-avatar/${file.filename}`,
@@ -53,4 +53,4 @@ const uploadFile = async (file) => {
   }
 }
 
-module.exports = { uploadFile };
+module.exports = { uploadAvatar };

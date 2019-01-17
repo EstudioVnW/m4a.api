@@ -2,7 +2,7 @@
 const { User, Match, Initiative, UsersInterests } = require('../../domain/entities');
 const Json = require('../responses/users');
 const multer = require('multer');
-const { uploadFile } = require('../../domain/firebaseStorage');
+const { uploadAvatar } = require('../../domain/firebaseStorage');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -31,13 +31,13 @@ module.exports = class Users {
     this.findUser();
     this.updateUser();
     this.deleteUser();
-    this.uploadAvatar();
+    this.uploadUserAvatar();
   }
 
-  uploadAvatar() {
+  uploadUserAvatar() {
     this.router.post("/users/uploadAvatar", upload.single('avatar'), async (req, res) => {
       try {
-        const response = await uploadFile(req.file)
+        const response = await uploadAvatar(req.file)
         if (response) res.status(200).json({ message: response })
       }
       catch (err) {
