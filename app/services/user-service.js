@@ -2,7 +2,7 @@
 const { User, Match, Initiative, UsersInterests } = require('../../domain/entities');
 const Json = require('../responses/users');
 const multer = require('multer');
-const { uploadAvatar, imageFilter, storage, upload } = require('../../domain/firebaseStorage');
+const { sendAvatar, upload } = require('../../domain/firebaseStorage');
 
 module.exports = class Users {
   constructor(router) {
@@ -21,7 +21,7 @@ module.exports = class Users {
   uploadUserAvatar() {
     this.router.post("/users/uploadAvatar", upload.single('avatar'), async (req, res) => {
       try {
-        const file = await uploadAvatar(req.file)
+        const file = await sendAvatar(req.file)
         if (file) res.status(200).json({ message: file })
       }
       catch (err) {
