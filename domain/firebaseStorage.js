@@ -5,16 +5,7 @@ const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.js')[env];
 const multer = require('multer');
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, './uploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, new Date().toISOString() + file.originalname);
-  }
-});
-
-const cleanFiles = (file) => {
+const cleanFolder = (file) => {
   fs.unlink(file, (err) => {
     if (err) throw err;
   });
@@ -42,15 +33,42 @@ const uploadAvatar = async (file) => {
       public: true,
     })
     if (storageFile) {
-      cleanFiles(file.path)
+      cleanFolder(file.path)
       return createPublicFileURL(file.path)
     }
+    cleanFolder(file.path)
+    throw err
   }
   catch (err) {
     console.error('ERROR:', err);
-    cleanFiles(file.path)
+    cleanFolder(file.path)
     throw err;
   }
 }
 
-module.exports = { uploadAvatar };
+const imageFilter = function (req, file, cb) {
+  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+      return cb(new Error('Only image files are allowed!'), false);
+  }
+  cb(null, true);
+};
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, './uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, new Date().toISOString() + file.originalname);
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 1024 * 1024 * 10000
+  },
+  fileFilter: imageFilter
+});
+
+
+module.exports = { uploadAvatar, imageFilter, storage, upload };

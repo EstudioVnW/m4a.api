@@ -2,23 +2,7 @@
 const { User, Match, Initiative, UsersInterests } = require('../../domain/entities');
 const Json = require('../responses/users');
 const multer = require('multer');
-const { uploadAvatar } = require('../../domain/firebaseStorage');
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, './uploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, new Date().toISOString() + file.originalname);
-  }
-});
-
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 1024 * 1024 * 10000
-  }
-});
+const { uploadAvatar, imageFilter, storage, upload } = require('../../domain/firebaseStorage');
 
 module.exports = class Users {
   constructor(router) {
@@ -37,11 +21,11 @@ module.exports = class Users {
   uploadUserAvatar() {
     this.router.post("/users/uploadAvatar", upload.single('avatar'), async (req, res) => {
       try {
-        const response = await uploadAvatar(req.file)
-        if (response) res.status(200).json({ message: response })
+        const file = await uploadAvatar(req.file)
+        if (file) res.status(200).json({ message: file })
       }
       catch (err) {
-        res.status(500).json({ message: 'something is broken'})
+        res.status(500).json({ message: 'something is broken' })
       }
     });
   }
