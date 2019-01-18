@@ -15,10 +15,10 @@ module.exports = class Users {
     this.findUser();
     this.updateUser();
     this.deleteUser();
-    this.uploadUserAvatar();
+    this.uploadAvatar();
   }
 
-  uploadUserAvatar() {
+  uploadAvatar() {
     this.router.post("/users/uploadAvatar", upload.single('avatar'), async (req, res) => {
       try {
         const file = await sendAvatar(req.file)
