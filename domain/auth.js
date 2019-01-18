@@ -1,7 +1,9 @@
 var jwt = require('jsonwebtoken');
 const { User } = require('./entities');
+const env = process.env.NODE_ENV || 'development';
+const config = require(__dirname + '/../config/config.js')[env];
 
-const secret = 'alohomora'
+const secret = config.jwtSecret
 
 const login = async (email) => {
   const user = await User.findOne({

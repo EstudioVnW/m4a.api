@@ -8,7 +8,8 @@ module.exports = {
     "database": process.env.RELACIONAL_DB_NAME,
     "host": process.env.RELACIONAL_DB_HOST,
     "dialect": "mysql",
-    "projectId": process.env.PROJECT_ID
+    "projectId": process.env.FIREBASE_PROJECT_ID,
+    "jwtSecret": process.env.JWT_SECRET
   },
   "test": {
     "username": process.env.TEST_RELACIONAL_DB_USERNAME,
@@ -16,7 +17,8 @@ module.exports = {
     "database": process.env.TEST_RELACIONAL_DB_NAME,
     "host": process.env.TEST_RELACIONAL_DB_HOST,
     "dialect": "mysql",
-    "projectId": process.env.PROJECT_ID
+    "projectId": process.env.FIREBASE_PROJECT_ID,
+    "jwtSecret": process.env.JWT_SECRET
   },
   "production": {
     "username": process.env.RELACIONAL_DB_USERNAME,
@@ -24,6 +26,7 @@ module.exports = {
     "database": process.env.RELACIONAL_DB_NAME,
     "host": process.env.RELACIONAL_DB_HOST,
     "dialect": "mysql",
-    "projectId": process.env.PROJECT_ID
+    "projectId": process.env.FIREBASE_PROJECT_ID,
+    "jwtSecret": process.env.JWT_SECRET
   }
 }
