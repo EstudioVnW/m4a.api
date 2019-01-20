@@ -1,6 +1,6 @@
 'use strict';
 const { User, Match, Initiative, UsersInterests } = require('../../domain/entities');
-const { sendAvatar, upload } = require('../../domain/firebaseStorage');
+const { sendAvatar, handleImage } = require('../../domain/firebaseStorage');
 const Json = require('../responses/users');
 
 module.exports = class Users {
@@ -129,7 +129,7 @@ module.exports = class Users {
   }
 
   uploadAvatar() {
-    this.router.post("/users/uploadAvatar", upload.single('avatar'), async (req, res) => {
+    this.router.post("/users/uploadavatar", handleImage.single('avatar'), async (req, res) => {
       try {
         const file = await sendAvatar(req.file)
         if (file) res.status(200).json({ message: file })

@@ -4,6 +4,7 @@ const { InitiativeRepository } = require('../../domain/repositories');
 
 const Json = require('../responses/initiatives');
 const { loggedUser } = require('../../domain/auth')
+const { sendAvatar, handleImage } = require('../../domain/firebaseStorage');
 
 module.exports = class Initiatives {
   constructor(router) {
@@ -14,6 +15,7 @@ module.exports = class Initiatives {
     this.createInitiative();
     this.findInitiative();
     this.findInitiativesList();
+    this.uploadPhotos();
   }
 
   createInitiative() {
@@ -83,6 +85,23 @@ module.exports = class Initiatives {
         res.status(500).json(err)
       }
     });
+  }
+
+  uploadPhotos() {
+    this.router.post('/initiatives/uploadphotos', handleImage.array('avatar', 12), async (req, res) => {
+      try {
+        const images = await Promise.all(
+          req.files.map(item => sendAvatar(item))
+        )
+        if (images) {
+          res.status(200).json({ message: images })
+        }
+      }
+      catch (err) {
+        console.log(err)
+        res.status(500).json({ message: 'something is broken' })
+      }
+    })
   }
 
 };

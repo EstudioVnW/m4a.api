@@ -5,6 +5,33 @@ const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.js')[env];
 const multer = require('multer');
 
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, './uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, new Date().toISOString() + file.originalname);
+  }
+});
+/*
+const upload = multer({ storage : storage }).array('userPhoto',2);
+*/
+
+const imageFilter = function (req, file, cb) {
+  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+      return cb(new Error('Only image files are allowed!'), false);
+  }
+  cb(null, true);
+};
+
+const handleImage = multer({
+  storage: storage,
+  limits: {
+    fileSize: 1024 * 1024 * 10000
+  },
+  fileFilter: imageFilter
+});
+
 const cleanFolder = (file) => {
   fs.unlink(file, (err) => {
     if (err) throw err;
@@ -46,29 +73,4 @@ const sendAvatar = async (file) => {
   }
 }
 
-const imageFilter = function (req, file, cb) {
-  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
-      return cb(new Error('Only image files are allowed!'), false);
-  }
-  cb(null, true);
-};
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, './uploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, new Date().toISOString() + file.originalname);
-  }
-});
-
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 1024 * 1024 * 10000
-  },
-  fileFilter: imageFilter
-});
-
-
-module.exports = { sendAvatar, upload };
+module.exports = { sendAvatar, handleImage };
