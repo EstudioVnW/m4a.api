@@ -11,9 +11,49 @@ module.exports = class Initiatives {
   }
 
   expose() {
-    this.findInitiativesList();
     this.createInitiative();
     this.findInitiative();
+    this.findInitiativesList();
+  }
+
+  createInitiative() {
+    this.router.post('/initiatives', async (req, res) => {
+      try {
+        res.status(200).json({
+          data: await Initiative.create(
+            req.body, { include: [InitiativesInterests]
+          })
+        })
+      }
+      catch (err) {
+        res.status(500).json(err)
+      }
+    });
+  }
+
+  findInitiative() {
+    this.router.get('/initiatives/:initiativeId', async (req, res) => {
+      try {
+        const initiative = await Initiative.findOne({
+          where: { id: req.params.initiativeId },
+          include: [{
+            model: Match,
+            include: [User]
+          }]
+        })
+        
+        if (initiative) {
+          return res.status(200).json({ data: initiative });
+        }
+
+        return res.status(404).json({
+          message: 'Didn’t find anything here!'
+        });
+      }
+      catch (err) {
+        res.status(500).json(err)
+      }
+    });
   }
 
   findInitiativesList() {
@@ -37,42 +77,6 @@ module.exports = class Initiatives {
 
         return res.status(200).json({
           data: await Initiative.findAll().map(initiative => Json.format(initiative))
-        })
-      }
-      catch (err) {
-        res.status(500).json(err)
-      }
-    });
-  }
-
-  findInitiative() {
-    this.router.get('/initiatives/:initiativeId', async (req, res) => {
-      try {
-        const initiative = await Initiative.findOne({
-          where: { id: req.params.initiativeId },
-          include: [{
-            model: Match,
-            include: [User]
-          }]
-        })
-        
-        if (initiative) {
-          return res.status(200).json({data: initiative});
-        }
-
-        return res.status(404).json({ message: 'Didn’t find anything here!' });
-      }
-      catch (err) {
-        res.status(500).json(err)
-      }
-    });
-  }
-
-  createInitiative() {
-    this.router.post('/initiatives', async (req, res) => {
-      try {
-        res.status(200).json({
-          data: await Initiative.create(req.body, { include: [InitiativesInterests] })
         })
       }
       catch (err) {

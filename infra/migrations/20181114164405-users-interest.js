@@ -8,11 +8,11 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      interestDescription: {
+      type: {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      interestType: {
+      description: {
         allowNull: false,
         type: Sequelize.STRING,
       },

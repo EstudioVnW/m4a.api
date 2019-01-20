@@ -1,5 +1,4 @@
 'use strict';
-// basic configs
 const express = require('express');
 const bodyParser = require('body-parser');
 const { requiresAuth } = require('./domain/auth');
@@ -10,11 +9,10 @@ const UserService = require('./app/services/user-service');
 const InitiativeService = require('./app/services/initiative-service.js');
 const Login = require('./app/services/auth-service');
 
-const port = 3000
-
 // swagger setup
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./config/swagger.json');
+const port = 3000
 
 class Server {
   constructor () {
@@ -63,7 +61,6 @@ class Server {
     this.app.listen(port, () => {
       console.log(`Readyy! http://localhost:${port}/`);
     });
-
   }
 }
 

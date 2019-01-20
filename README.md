@@ -5,7 +5,7 @@ yarn install
 
 ## migrate
 ```
-NODE_ENV=developemnt node_modules/.bin/sequelize db:migrate
+NODE_ENV=development node_modules/.bin/sequelize db:migrate
 ```
 
 ## start!

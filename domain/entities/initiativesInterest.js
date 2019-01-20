@@ -1,13 +1,13 @@
 module.exports = (sequelize, DataTypes) => {
   const InitiativesInterests = sequelize.define('InitiativesInterests', {
-    interestDescription: DataTypes.STRING,
-    interestType: {
+    description: DataTypes.STRING,
+    type: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         isIn: {
           args: [['Areas', 'Causes',  'SDG', 'Skills']],
-          msg: "interestType must be a 'skill', 'cause', 'area' or 'sdg'"
+          msg: "type must be a 'skill', 'cause', 'area' or 'sdg'"
         }
       }
     },
