@@ -13,9 +13,6 @@ const storage = multer.diskStorage({
     cb(null, new Date().toISOString() + file.originalname);
   }
 });
-/*
-const upload = multer({ storage : storage }).array('userPhoto',2);
-*/
 
 const imageFilter = function (req, file, cb) {
   if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {

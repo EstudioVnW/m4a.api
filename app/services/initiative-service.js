@@ -88,7 +88,7 @@ module.exports = class Initiatives {
   }
 
   uploadPhotos() {
-    this.router.post('/initiatives/uploadphotos', handleImage.array('avatar', 12), async (req, res) => {
+    this.router.post('/initiatives/uploadphotos', handleImage.array('avatar', 5), async (req, res) => {
       try {
         const images = await Promise.all(
           req.files.map(item => sendAvatar(item))
