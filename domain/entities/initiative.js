@@ -62,6 +62,9 @@ module.exports = (sequelize, DataTypes) => {
     Initiative.hasMany(models.InitiativesInterests, {
       foreignKey: 'InitiativeId',
     });
+    Initiative.hasMany(models.InitiativesImages, {
+      foreignKey: 'InitiativeId',
+    });
   };
 
   return Initiative;

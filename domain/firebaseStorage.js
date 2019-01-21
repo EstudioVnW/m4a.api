@@ -36,7 +36,7 @@ const cleanFolder = (file) => {
 }
 
 const createPublicFileURL = (storageName) => {
-  return `http://storage.googleapis.com/${bucketName}/${encodeURIComponent(storageName)}`;
+  return `http://storage.googleapis.com/${bucketName}/${storageName}`;
 }
 
 const projectId = config.projectId
@@ -58,7 +58,7 @@ const sendAvatar = async (file) => {
     })
     if (storageFile) {
       cleanFolder(file.path)
-      return createPublicFileURL(file.path)
+      return createPublicFileURL(file.filename)
     }
     cleanFolder(file.path)
     throw err
@@ -70,4 +70,28 @@ const sendAvatar = async (file) => {
   }
 }
 
-module.exports = { sendAvatar, handleImage };
+const sendPhotos = async (file) => {
+  try {
+    const imgs = file.data
+    const initiativeName = file.initiative.name
+
+    const storageFile = await bucket.upload(imgs.path, {
+      destination: `initiative-photos/${initiativeName}`,
+      public: true,
+    })
+    console.log('storageFile', storageFile)
+    if (storageFile) {
+      cleanFolder(imgs.path)
+      return createPublicFileURL(`initiative-photos/${initiativeName}`)
+    }
+    cleanFolder(imgs.path)
+    throw err
+  }
+  catch (err) {
+    console.error('ERROR:', err);
+    cleanFolder(imgs.path)
+    throw err;
+  }
+}
+
+module.exports = { sendAvatar, sendPhotos, handleImage };

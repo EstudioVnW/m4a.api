@@ -1,10 +1,10 @@
 'use strict';
-const { Initiative, Match, User, InitiativesInterests } = require('../../domain/entities');
+const { Initiative, Match, User, InitiativesInterests, InitiativesImages } = require('../../domain/entities');
 const { InitiativeRepository } = require('../../domain/repositories');
 
 const Json = require('../responses/initiatives');
 const { loggedUser } = require('../../domain/auth')
-const { sendAvatar, handleImage } = require('../../domain/firebaseStorage');
+const { sendPhotos, handleImage } = require('../../domain/firebaseStorage');
 
 module.exports = class Initiatives {
   constructor(router) {
@@ -88,14 +88,44 @@ module.exports = class Initiatives {
   }
 
   uploadPhotos() {
-    this.router.post('/initiatives/uploadphotos', handleImage.array('avatar', 5), async (req, res) => {
+    this.router.post('/initiatives/uploadphotos/:initiativeId', handleImage.array('avatar', 5), async (req, res) => {
       try {
-        const images = await Promise.all(
-          req.files.map(item => sendAvatar(item))
-        )
-        if (images) {
-          res.status(200).json({ message: images })
+        console.log('searching initiative...')
+        const find = await Initiative.findOne({
+          where: { id: req.params.initiativeId }
+        })
+
+        if (find) {
+          console.log('sending images to firebase')
+          const saveFirebase = await Promise.all(
+            req.files.map(item => {
+                console.log('saving...')
+                return sendPhotos({
+                  initiative: find,
+                  data: item
+                })
+              }
+            )
+          )
+
+          if (saveFirebase) {
+            console.log('sending images to mysql')
+            const saveMySQL = await Promise.all(
+              saveFirebase.map(item => {
+                console.log('saving...')
+                InitiativesImages.create({
+                  InitiativeId: req.params.initiativeId,
+                  image: item
+                })
+              })
+            )
+
+            if (saveMySQL) {
+              return res.status(200).json({ data: saveFirebase })
+            }
+          } 
         }
+
       }
       catch (err) {
         console.log(err)
