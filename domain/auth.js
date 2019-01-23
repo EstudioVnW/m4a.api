@@ -1,5 +1,5 @@
 var jwt = require('jsonwebtoken');
-const { User, UsersInterest } = require('./entities');
+const { User, UsersInterests } = require('./entities');
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.js')[env];
 
@@ -24,10 +24,10 @@ const loggedUser = async (req) => {
     const authorization = req.header('Authorization')
     const token = authorization.replace('Bearer ', '')
     const info = jwt.verify(token, secret);
-    
+
     return await User.findOne({
       where: { email: info.email },
-      include: [UsersInterest]
+      include: [UsersInterests]
     })
 
   }

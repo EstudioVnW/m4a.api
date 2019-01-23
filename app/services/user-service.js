@@ -2,6 +2,7 @@
 const { User, Match, Initiative, UsersInterests } = require('../../domain/entities');
 const { sendAvatar, handleImage } = require('../../domain/firebaseStorage');
 const Json = require('../responses/users');
+const { login } = require('../../domain/auth');
 
 module.exports = class Users {
   constructor(router) {
@@ -20,12 +21,18 @@ module.exports = class Users {
   createUser() {
     this.router.post('/users', async (req, res) => {
       try {
+        // grava os dados
         const user = await User.create(
           req.body, { include: [UsersInterests] }
         )
+        const token = await login(req.body.email)
+
+        // mando os dados guardados :)
         res.status(200).json({
+          token: token,
           data: Json.format(user)
         })
+        // mandar também o token :)))
       }
       catch (err) {
         console.log(err)
