@@ -56,8 +56,8 @@ class Server {
     new InitiativeService(this.router).expose();
     new Login(this.router).expose();
 
-    this.app.use('/', this.router);
     this.app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+    this.app.use('/', this.router);
     this.app.listen(port, () => {
       console.log(`Readyy! http://localhost:${port}/`);
     });

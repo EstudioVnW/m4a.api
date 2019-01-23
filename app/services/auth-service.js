@@ -33,11 +33,13 @@ module.exports = class Login {
       try {
         const user = await loggedUser(req)
         if (user) {
-          return res.status(200).json({ data: Json.format(user) });
+          return res.status(200).json({ data: user });
+          /*return res.status(200).json({ data: Json.format(user) });*/
         }
         return res.status(401).end()
       }
       catch (err) {
+        console.log(err)
         return res.status(500).json(err)
       }
     });

@@ -21,6 +21,7 @@ const InitiativeJson = {
         createdAt: initiative.createdAt,
         updatedAt: initiative.updatedAt,
         userId: initiative.UserId,
+        initiativesInterests: initiative.InitiativesInterests
       }
     };
   }

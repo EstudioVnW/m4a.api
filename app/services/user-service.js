@@ -13,20 +13,22 @@ module.exports = class Users {
     this.updateUser();
     this.deleteUser();
     this.findUser();
-    this.findUsersList();
     this.uploadAvatar();
+    this.findUsersList();
   }
 
   createUser() {
     this.router.post('/users', async (req, res) => {
       try {
+        const user = await User.create(
+          req.body, { include: [UsersInterests] }
+        )
         res.status(200).json({
-          data: await User.create(
-            req.body, { include: [UsersInterests] }
-          )
+          data: Json.format(user)
         })
       }
       catch (err) {
+        console.log(err)
         res.status(500).json(err)
       }
     });
@@ -83,7 +85,7 @@ module.exports = class Users {
             include: [Initiative]
           })
           if (user) {
-            return res.status(200).json({data: user});
+            return res.status(200).json({data: Json.format(user)});
           }
         }
 
@@ -107,15 +109,28 @@ module.exports = class Users {
     });
   }
 
+  uploadAvatar() {
+    this.router.post("/users/uploadavatar", handleImage.single('avatar'), async (req, res) => {
+      try {
+        const file = await sendAvatar(req.file)
+        if (file) res.status(200).json({ message: file })
+      }
+      catch (err) {
+        res.status(500).json({ message: 'something is broken' })
+      }
+    });
+  }
+
   findUsersList() {
     this.router.get('/users', async (req, res) => {
       try {
         const { include } = req.query;
         if (include === 'users-interests') {
+          const users = await User.findAll({
+            include: [UsersInterests]
+          })
           return res.status(200).json({
-              data: await User.findAll({
-              include: [UsersInterests]
-            })
+            data: users.map((user) => Json.format(user)) 
           })
         }
         res.status(200).json({
@@ -128,16 +143,5 @@ module.exports = class Users {
     });
   }
 
-  uploadAvatar() {
-    this.router.post("/users/uploadavatar", handleImage.single('avatar'), async (req, res) => {
-      try {
-        const file = await sendAvatar(req.file)
-        if (file) res.status(200).json({ message: file })
-      }
-      catch (err) {
-        res.status(500).json({ message: 'something is broken' })
-      }
-    });
-  }
 
 };

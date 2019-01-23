@@ -1,9 +1,11 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "Match4Action"
+    "version": "1.0.0",
+    "title": "Match4Action API"
   },
   "host": "localhost:3000",
+  "basePath": "/",
   "tags": [
     {
       "name": "users",
@@ -18,6 +20,12 @@
       "description": "Operations about auth"
     }
   ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
   "securityDefinitions": {
     "Bearer": {
       "type": "apiKey",
@@ -31,23 +39,16 @@
         "tags": [
           "users"
         ],
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
-        "summary": "Create user",
-        "description": "This can only be done by the logged in user.",
+        "description": "Create new user in system",
         "parameters": [
           {
+            "name": "user",
             "in": "body",
-            "name": "body",
-            "description": "Created user object",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/User"
-            }
+            "description": "User that we want to create"
           }
+        ],
+        "produces": [
+          "application/json"
         ],
         "responses": {}
       },
@@ -62,6 +63,19 @@
         ],
         "summary": "Get a list of users",
         "description": "",
+        "responses": {}
+      }
+    },
+    "/users?include=users-interests": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "responses": {}
       }
     },
@@ -86,17 +100,7 @@
             "required": true
           }
         ],
-        "responses": {
-          "201": {
-            "description": "Successful operation"
-          },
-          "404": {
-            "description": "User not found"
-          },
-          "500": {
-            "description": "Exception"
-          }
-        }
+        "responses": {}
       }
     },
     "/users/{userId}": {
@@ -117,31 +121,17 @@
             "in": "body",
             "name": "body",
             "description": "User object that needs to be added",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/User"
-            }
+            "required": true
           },
           {
             "in": "path",
             "name": "userId",
             "description": "ID of user to return",
             "required": true,
-            "type": "integer",
-            "format": "int64"
+            "type": "integer"
           }
         ],
-        "responses": {
-          "201": {
-            "description": "Successful operation"
-          },
-          "404": {
-            "description": "User not found"
-          },
-          "500": {
-            "description": "Exception"
-          }
-        }
+        "responses": {}
       },
       "delete": {
         "tags": [
@@ -161,21 +151,10 @@
             "name": "userId",
             "description": "ID of user to return",
             "required": true,
-            "type": "integer",
-            "format": "int64"
+            "type": "integer"
           }
         ],
-        "responses": {
-          "201": {
-            "description": "Successful operation"
-          },
-          "404": {
-            "description": "User not found"
-          },
-          "500": {
-            "description": "Exception"
-          }
-        }
+        "responses": {}
       }
     },
     "/users/{email}?include=initiatives": {
@@ -199,17 +178,7 @@
             "required": true
           }
         ],
-        "responses": {
-          "201": {
-            "description": "Successful operation"
-          },
-          "404": {
-            "description": "User not found"
-          },
-          "500": {
-            "description": "Exception"
-          }
-        }
+        "responses": {}
       }
     },
     "/initiatives": {
@@ -230,10 +199,7 @@
             "in": "body",
             "name": "body",
             "description": "Created initiative object",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Initiative"
-            }
+            "required": true
           }
         ],
         "responses": {}
@@ -307,130 +273,91 @@
   },
   "definitions": {
     "User": {
-      "type": "object",
+      "required": [
+        "username",
+        "email",
+        "userProfile"
+      ],
       "properties": {
         "username": {
           "type": "string"
         },
         "email": {
-          "type": "string"
-        },
-        "bio": {
-          "type": "string"
-        },
-        "birthday": {
           "type": "string",
-          "format": "date-time"
+          "uniqueItems": true
         },
-        "avatar": {
-          "type": "string"
-        },
-        "country": {
-          "type": "string"
-        },
-        "state": {
-          "type": "string"
-        },
-        "city": {
-          "type": "string"
-        },
-        "address": {
-          "type": "string"
-        },
-        "latlong": {
-          "type": "string"
-        },
-        "skills": {
-          "type": "string"
-        },
-        "causes": {
-          "type": "string"
-        },
-        "areas": {
-          "type": "string"
-        },
-        "sdgs": {
-          "type": "string"
-        },
-        "allowToRemote": {
-          "type": "integer"
-        },
-        "userProfile": {
-          "type": "string"
-        },
-        "userStatus": {
-          "type": "integer"
+        "bio": { "type": "string" },
+        "birthday": { "type": "string" },
+        "avatar": { "type": "string" },
+        "country": { "type": "string" },
+        "state": { "type": "string" },
+        "city": { "type": "string" },
+        "address": { "type": "string" },
+        "latlong": { "type": "string" },
+        "zipcode": { "type": "string" },
+        "allowToRemote": { "type": "integer" },
+        "userProfile": { "type": "string" },
+        "userStatus": { "type": "integer" },
+        "UsersInterests": {
+          "type": "array",
+          "$ref": "#/definitions/UsersInterests"
         }
+      }
+    },
+    "UsersInterests": {
+      "required": [
+        "description",
+        "type",
+        "UserId"
+      ],
+      "properties": {
+        "description": { "type": "string" },
+        "type": { "type": "string" },
+        "UserId": { "type": "integer" }
       }
     },
     "Initiative": {
       "type": "object",
       "properties": {
-        "name": {
-          "type": "string"
+        "name": { "type": "string" },
+        "website": { "type": "string" },
+        "bio": { "type": "string" },
+        "birthday": { "type": "string" },
+        "avatar": { "type": "string" },
+        "country": { "type": "string" },
+        "state": { "type": "string" },
+        "city": { "type": "string" },
+        "address": { "type": "string" },
+        "latlong": { "type": "string" },
+        "skills": { "type": "string" },
+        "causes": { "type": "string" },
+        "areas": { "type": "string" },
+        "sdgs": { "type": "string" },
+        "eventType": { "type": "string" },
+        "start": { "type": "string" },
+        "finish": { "type": "string" },
+        "InitiativesInterests": {
+          "type": "array",
+          "$ref": "#/definitions/InitiativesInterests"
         },
-        "website": {
-          "type": "string"
-        },
-        "bio": {
-          "type": "string"
-        },
-        "birthday": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "avatar": {
-          "type": "string"
-        },
-        "country": {
-          "type": "string"
-        },
-        "state": {
-          "type": "string"
-        },
-        "city": {
-          "type": "string"
-        },
-        "address": {
-          "type": "string"
-        },
-        "latlong": {
-          "type": "string"
-        },
-        "skills": {
-          "type": "string"
-        },
-        "causes": {
-          "type": "string"
-        },
-        "areas": {
-          "type": "string"
-        },
-        "sdgs": {
-          "type": "string"
-        },
-        "eventType": {
-          "type": "string"
-        },
-        "start": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "finish": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "UserId": {
-          "type": "integer"
-        }
+        "UserId": { "type": "integer" }
+      }
+    },
+    "InitiativesInterests": {
+      "required": [
+        "description",
+        "type",
+        "InitiativeId"
+      ],
+      "properties": {
+        "description": { "type": "string" },
+        "type": { "type": "string" },
+        "InitiativeId": { "type": "integer" }
       }
     },
     "Auth": {
       "type": "object",
-      "properties": {
-        "email": {
-          "type": "string"
-        }
+      "properties": { "email": { "type": "string" }
       }
     }
   }
