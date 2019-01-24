@@ -10,7 +10,7 @@ const storage = multer.diskStorage({
     cb(null, './uploads/');
   },
   filename: (req, file, cb) => {
-    cb(null, new Date().toISOString() + file.originalname);
+    cb(null, file.originalname);
   }
 });
 
@@ -76,13 +76,13 @@ const sendPhotos = async (file) => {
     const initiativeName = file.initiative.name
 
     const storageFile = await bucket.upload(imgs.path, {
-      destination: `initiative-photos/${initiativeName}`,
+      destination: `initiative-photos/${initiativeName}/${file.data.filename}`,
       public: true,
     })
-    console.log('storageFile', storageFile)
+
     if (storageFile) {
       cleanFolder(imgs.path)
-      return createPublicFileURL(`initiative-photos/${initiativeName}`)
+      return createPublicFileURL(`initiative-photos/${initiativeName}/${file.data.filename}`)
     }
     cleanFolder(imgs.path)
     throw err

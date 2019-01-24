@@ -42,18 +42,6 @@ module.exports = {
       zipcode: {
         type: Sequelize.STRING,
       },
-      skills: {
-        type: Sequelize.STRING,
-      },
-      causes: {
-        type: Sequelize.STRING,
-      },
-      areas: {
-        type: Sequelize.STRING,
-      },
-      sdgs: {
-        type: Sequelize.STRING,
-      },
       eventType: {
         type: Sequelize.STRING,
       },
