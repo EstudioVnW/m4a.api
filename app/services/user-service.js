@@ -22,22 +22,22 @@ module.exports = class Users {
     this.router.post('/users', async (req, res) => {
       try {
         // grava os dados
-/*        const user = await User.create(
-          req.body, { include: [UsersInterests] }
-        )
-*/
         const user = await User.create(
           req.body
         )
+          
+        const rela = await UsersInterests.create({
+          InterestId: 1,
+          UserId: user.id
+        })
 
         const token = await login(req.body.email)
 
-        // mando os dados guardados :)
         res.status(200).json({
           token: token,
-          data: Json.format(user)
+          data: user,
+          rela: rela
         })
-        // mandar também o token :)))
       }
       catch (err) {
         console.log(err)
@@ -137,7 +137,6 @@ module.exports = class Users {
   }
 
   findUsersList() {
-    // ok
     this.router.get('/users', async (req, res) => {
       try {
         const { include } = req.query;
@@ -157,6 +156,7 @@ module.exports = class Users {
         })
       }
       catch (err) {
+        console.log(err)
         res.status(500).json({ message: 'something is broken' })
       }
     });

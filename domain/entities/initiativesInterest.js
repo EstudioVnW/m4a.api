@@ -1,11 +1,11 @@
 module.exports = (sequelize, DataTypes) => {
   const InitiativesInterests = sequelize.define('InitiativesInterests', {
-    UserId: {
+    InterestId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       validate: {
         notEmpty: {
-          msg: "UserId can't be empty"
+          msg: "InterestId can't be empty"
         }
       }
     },
@@ -19,10 +19,6 @@ module.exports = (sequelize, DataTypes) => {
       }
     }
   });
-
-  InitiativesInterests.associate = models => {
-    InitiativesInterests.belongsTo(models.Initiative);
-  };
 
   return InitiativesInterests;
 }

@@ -1,5 +1,5 @@
 'use strict';
-const { Initiative, Match, User, InitiativesInterests, InitiativesImages } = require('../../domain/entities');
+const { Initiative, Match, User, InitiativesInterests, Interests, InitiativesImages } = require('../../domain/entities');
 const { InitiativeRepository } = require('../../domain/repositories');
 
 const Json = require('../responses/initiatives');
@@ -69,11 +69,14 @@ module.exports = class Initiatives {
           })
         }
         // initiatives-interests
-        if (req.query.include === 'initiatives-interests') {
+        if (req.query.include === 'interests') {
+
+          const initiativeWithInterests = await Initiative.findAll({
+            include: [{ model: Interests }]
+          })
+
           return res.status(200).json({
-              data: await Initiative.findAll({
-              include: [InitiativesInterests]
-            })
+            data: initiativeWithInterests
           })
         }
 

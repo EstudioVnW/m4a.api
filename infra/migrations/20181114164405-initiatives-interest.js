@@ -8,19 +8,11 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      description: {
-        allowNull: false,
-        type: Sequelize.STRING,
-      },
-      type: {
-        allowNull: false,
-        type: Sequelize.STRING,
-      },
-      createdAt: {
-        type: Sequelize.DATE,
-      },
-      updatedAt: {
-        type: Sequelize.DATE,
+      InterestId: {
+        type: Sequelize.INTEGER,
+        references: { model: 'Interests', key: 'id' },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
       },
       InitiativeId: {
         type: Sequelize.INTEGER,
@@ -28,9 +20,14 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
       },
+      createdAt: {
+        type: Sequelize.DATE,
+      },
+      updatedAt: {
+        type: Sequelize.DATE,
+      }
     });
   },
-
   down: (queryInterface) => {
     return queryInterface.dropTable('InitiativesInterests');
   }
