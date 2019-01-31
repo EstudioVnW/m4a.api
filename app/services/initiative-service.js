@@ -1,5 +1,5 @@
 'use strict';
-const { Initiative, Match, User, InitiativesInterests, Interests, InitiativesImages } = require('../../domain/entities');
+const { Initiative, Match, User, Interests, InitiativesImages } = require('../../domain/entities');
 const { InitiativeRepository } = require('../../domain/repositories');
 
 const Json = require('../responses/initiatives');
@@ -21,10 +21,13 @@ module.exports = class Initiatives {
   createInitiative() {
     this.router.post('/initiatives', async (req, res) => {
       try {
+        const Initiative = await Initiative.create(req.body, {
+          include: [{
+            model: Interests
+          }]
+        })
         res.status(200).json({
-          data: await Initiative.create(
-            req.body, { include: [InitiativesInterests]
-          })
+          data: Initiative
         })
       }
       catch (err) {

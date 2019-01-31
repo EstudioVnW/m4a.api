@@ -21,18 +21,12 @@ module.exports = class Users {
   createUser() {
     this.router.post('/users', async (req, res) => {
       try {
-/*        if (user) {*/
-/*          const eita = await user.setInterests([
-            1
-          ])*/
         const user = await User.create(req.body, {
           include: [{
             model: Interests
           }]
         })
-
         const token = await login(req.body.email)
-
         res.status(200).json({
           token: token,
           data: user
@@ -48,16 +42,18 @@ module.exports = class Users {
   updateUser() {
     this.router.put('/users/:userId', async (req, res) => {
       try {
-        if (await User.findOne({ where: { id: req.params.userId } })) {
-          if (await User.update(req.body, { where: { id: req.params.userId } })) {
-            return res.status(201).json({
-              message: 'User has been updated.'
-            });
-          }
+        const update = await User.update(
+          req.body, {
+          where: { id: req.params.userId }
+        })
+        if (update) {
+          console.log(req.body.Interests)
+          await user.setInterests(req.body.Interests)
+          
+          return res.status(201).json({
+            message: 'User has been updated.'
+          });
         }
-        return res.status(404).json({
-          message: 'Didn’t find anything here!'
-        });
       }
       catch (err) {
         return res.status(500).json(err);
