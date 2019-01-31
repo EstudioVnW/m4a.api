@@ -21,23 +21,32 @@ module.exports = class Users {
   createUser() {
     this.router.post('/users', async (req, res) => {
       try {
-        // grava os dados
         const user = await User.create(
           req.body
         )
-          
-        const rela = await UsersInterests.create({
-          InterestId: 1,
-          UserId: user.id
-        })
+
+        if (user) {
+          console.log(user)
+/*          const eita = await user.setInterests([
+            1
+          ])*/
+          const eita = await User.setInterest(
+              1
+          )
+        }
+
+
+
+
 
         const token = await login(req.body.email)
 
+        // mando os dados guardados :)
         res.status(200).json({
           token: token,
-          data: user,
-          rela: rela
+          data: user
         })
+        // mandar também o token :)))
       }
       catch (err) {
         console.log(err)
