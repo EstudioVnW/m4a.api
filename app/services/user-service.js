@@ -1,5 +1,5 @@
 'use strict';
-const { User, Match, Initiative, Interests, UsersInterests } = require('../../domain/entities');
+const { User, Match, Initiative, Interests } = require('../../domain/entities');
 const { sendAvatar, handleImage } = require('../../domain/firebaseStorage');
 const Json = require('../responses/users');
 const { login } = require('../../domain/auth');
@@ -21,32 +21,22 @@ module.exports = class Users {
   createUser() {
     this.router.post('/users', async (req, res) => {
       try {
-        const user = await User.create(
-          req.body
-        )
-
-        if (user) {
-          console.log(user)
+/*        if (user) {*/
 /*          const eita = await user.setInterests([
             1
           ])*/
-          const eita = await User.setInterest(
-              1
-          )
-        }
-
-
-
-
+        const user = await User.create(req.body, {
+          include: [{
+            model: Interests
+          }]
+        })
 
         const token = await login(req.body.email)
 
-        // mando os dados guardados :)
         res.status(200).json({
           token: token,
           data: user
         })
-        // mandar também o token :)))
       }
       catch (err) {
         console.log(err)
