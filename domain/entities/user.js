@@ -55,9 +55,7 @@ module.exports = (sequelize, DataTypes) => {
     User.hasMany(models.Initiative, {
       foreignKey: 'UserId',
     })
-    User.belongsToMany(models.Interests, {through: 'UsersInterests'}, {
-      foreignKey: 'UserId',
-    })
+    User.belongsToMany(models.Interests, {through: 'UsersInterests'})
   }
   return User;
 }

@@ -42,12 +42,17 @@ module.exports = class Users {
   updateUser() {
     this.router.put('/users/:userId', async (req, res) => {
       try {
-        const update = await User.update(
-          req.body, {
+        const user = await User.findOne({
           where: { id: req.params.userId }
         })
-        if (update) {
+
+        if (user) {
           console.log(req.body.Interests)
+          const update = await User.update(
+            req.body, {
+            where: { id: req.params.userId }
+          })
+
           await user.setInterests(req.body.Interests)
           
           return res.status(201).json({
