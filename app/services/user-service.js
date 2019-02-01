@@ -17,6 +17,7 @@ module.exports = class Users {
     this.deleteUser();
     this.uploadAvatar();
     this.updateUserInterests();
+    this.matchInitiative();
   }
 
   findUsersList() {
@@ -75,7 +76,7 @@ module.exports = class Users {
         if (include === 'initiatives') {
           const user = await User.findOne({
             where: { id: req.params.id },
-            include: [{'model': Initiative, as: 'UserInitiatives'}]
+            include: [{'model': Initiative, as: 'UserInitiatives'}, Initiative]
           })
           if (user) {
             return res.status(200).json({
@@ -87,7 +88,7 @@ module.exports = class Users {
         if (include === 'interests') {
           const user = await User.findOne({
             where: { id: req.params.id },
-            include: [Interests]
+            include: [Interests, Initiative]
           })
           if (user) {
             return res.status(200).json({
@@ -95,9 +96,10 @@ module.exports = class Users {
             });
           }
         }
-
+        // get user and matches
         const user = await User.findOne({
           where: { id: req.params.id },
+          include: [Initiative]
         })
 
         if (user) {
@@ -151,6 +153,7 @@ module.exports = class Users {
         });
         if (user){
           await user.setInterests(req.body.interests);
+          
           return res.status(201).json({
             message: 'Interests has been updated.'
           });
@@ -195,6 +198,40 @@ module.exports = class Users {
       }
       catch (err) {
         res.status(500).json({ message: 'something is broken' })
+      }
+    });
+  }
+
+  matchInitiative() {
+    this.router.post('/users/:userId/match', async (req, res) => {
+      try {
+        const user = await User.findOne({
+          where: { id: req.params.userId },
+          include: [{'model': Initiative, as: 'UserInitiatives'}]
+        })
+        if (user && req.body.initiativeId) {
+          const isOwner = user.UserInitiatives.find((initiative) => {
+            return initiative.dataValues.id == req.body.initiativeId
+          })
+          if (isOwner) {
+            return res.status(401).json({
+              message: 'user is an owner.'
+            });
+          }
+          else {
+            await user.addInitiative(req.body.initiativeId);
+
+            return res.status(201).json({
+              message: 'success.'
+            });
+          }
+        }
+        return res.status(201).json({
+          message: 'User not found.'
+        });
+      }     
+      catch (err) {
+        res.status(500).json(err)
       }
     });
   }

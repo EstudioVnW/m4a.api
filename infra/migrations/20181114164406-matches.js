@@ -8,9 +8,9 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      InterestId: {
+      InitiativeId: {
         type: Sequelize.INTEGER,
-        references: { model: 'Interests', key: 'id' },
+        references: { model: 'Initiatives', key: 'id' },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
       },
