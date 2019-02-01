@@ -52,10 +52,12 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   User.associate = models => {
-    User.hasMany(models.Initiative, {
-      foreignKey: 'UserId',
-    })
+
+    User.hasMany(models.Initiative, { foreignKey: 'UserId', as: 'UserInitiatives'} )
+
     User.belongsToMany(models.Interests, {through: 'UsersInterests'})
+
+    User.belongsToMany(models.Initiative, {through: 'Matches'})
   }
   return User;
 }

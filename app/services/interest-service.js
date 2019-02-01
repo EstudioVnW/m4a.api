@@ -71,7 +71,7 @@ module.exports = class Initiatives {
         return res.status(200).json({
           data: await Interests.create({
             description: req.body.description,
-            type: 'Areas'
+            type: req.params.type
           })
         })
       }

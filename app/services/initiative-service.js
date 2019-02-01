@@ -21,16 +21,22 @@ module.exports = class Initiatives {
   createInitiative() {
     this.router.post('/initiatives', async (req, res) => {
       try {
-        const Initiative = await Initiative.create(req.body, {
-          include: [{
-            model: Interests
-          }]
-        })
+        const initiative = await Initiative.create(req.body)
+        if (req.body.interests) {
+          const interests = await initiative.setInterests(req.body.interests);
+          res.status(200).json({
+            data: initiative,
+            relationships: {
+              interests
+            }
+          })
+        }
         res.status(200).json({
-          data: Initiative
+          data: initiative
         })
       }
       catch (err) {
+        console.log(err)
         res.status(500).json(err)
       }
     });
@@ -73,7 +79,6 @@ module.exports = class Initiatives {
         }
         // initiatives-interests
         if (req.query.include === 'interests') {
-
           const initiativeWithInterests = await Initiative.findAll({
             include: [{ model: Interests }]
           })

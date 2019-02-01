@@ -1,5 +1,5 @@
 'use strict';
-const { User, Match, Initiative, Interests } = require('../../domain/entities');
+const { User, Initiative, Interests } = require('../../domain/entities');
 const { sendAvatar, handleImage } = require('../../domain/firebaseStorage');
 const Json = require('../responses/users');
 const { login } = require('../../domain/auth');
@@ -10,31 +10,109 @@ module.exports = class Users {
   }
 
   expose() {
+    this.findUsersList();
     this.createUser();
+    this.findUser();
     this.updateUser();
     this.deleteUser();
-    this.findUser();
     this.uploadAvatar();
-    this.findUsersList();
+    this.updateUserInterests();
+  }
+
+  findUsersList() {
+    this.router.get('/users', async (req, res) => {
+      try {
+        res.status(200).json({
+          data: await User.findAll().map((user) => {
+            return {
+              type: `User`,
+              id: user.id,
+              attributes: {
+                username: user.username,
+                email: user.email,
+                avatar: user.avatar,
+                bio: user.bio,
+                country: user.country,
+                city: user.city,
+                userProfile: user.userProfile
+              }
+            }
+          })
+        })
+      }
+      catch (err) {
+        res.status(500).json({
+          message: 'something is broken'
+        })
+      }
+    });
   }
 
   createUser() {
     this.router.post('/users', async (req, res) => {
       try {
-        const user = await User.create(req.body, {
-          include: [{
-            model: Interests
-          }]
-        })
+        const user = await User.create(req.body)
+        const interests = await user.setInterests(req.body.interests);
         const token = await login(req.body.email)
+        
         res.status(200).json({
-          token: token,
-          data: user
+          data: Json.format(user),
+          relationships: { interests },
+          token: token
         })
+      }      
+      catch (err) {
+        res.status(500).json(err)
+      }
+    });
+  }
+
+  findUser() {
+    this.router.get('/users/:id', async (req, res) => {
+      try {
+        const { include } = req.query;
+        
+        if (include === 'initiatives') {
+          const user = await User.findOne({
+            where: { id: req.params.id },
+            include: [{'model': Initiative, as: 'UserInitiatives'}]
+          })
+          if (user) {
+            return res.status(200).json({
+              data: Json.format(user)
+            });
+          }
+        }
+
+        if (include === 'interests') {
+          const user = await User.findOne({
+            where: { id: req.params.id },
+            include: [Interests]
+          })
+          if (user) {
+            return res.status(200).json({
+              data: Json.format(user)
+            });
+          }
+        }
+
+        const user = await User.findOne({
+          where: { id: req.params.id },
+        })
+
+        if (user) {
+          return res.status(200).json({
+            data: Json.format(user)
+          });
+        }
+
+        return res.status(404).json({
+          message: 'Didn’t find anything here!'
+        });
       }
       catch (err) {
         console.log(err)
-        res.status(500).json(err)
+        res.status(500).json({ message: 'something is broken' })
       }
     });
   }
@@ -45,26 +123,49 @@ module.exports = class Users {
         const user = await User.findOne({
           where: { id: req.params.userId }
         })
-
         if (user) {
-          console.log(req.body.Interests)
-          const update = await User.update(
+          const update = await user.update(
             req.body, {
             where: { id: req.params.userId }
           })
 
-          await user.setInterests(req.body.Interests)
-          
           return res.status(201).json({
             message: 'User has been updated.'
           });
         }
+        return res.status(201).json({
+          message: 'User not found.'
+        });
       }
       catch (err) {
         return res.status(500).json(err);
       }
     });
   }
+
+  updateUserInterests() {
+    this.router.put('/users/:userId/interests', async (req, res) => {
+      try {
+        const user = await User.findOne({
+          where: { id: req.params.userId }
+        });
+        if (user){
+          await user.setInterests(req.body.interests);
+          return res.status(201).json({
+            message: 'Interests has been updated.'
+          });
+        }
+        
+        return res.status(404).json({
+          message: 'User not found.'
+        });
+      }
+      catch (err) {
+        return res.status(500).json(err);
+      }
+    });
+  }
+
 
   deleteUser() {
     this.router.delete('/users/:userId', async (req, res) => {
@@ -86,44 +187,6 @@ module.exports = class Users {
     });
   }
 
-  findUser() {
-    // ok
-    this.router.get('/users/:email', async (req, res) => {
-      try {
-        const { include } = req.query;
-        
-        if (include === 'initiatives') {
-          const user = await User.findOne({
-            where: { email: req.params.email },
-            include: [Initiative]
-          })
-          if (user) {
-            return res.status(200).json({
-              data: Json.format(user)
-            });
-          }
-        }
-
-        const user = await User.findOne({
-          where: { email: req.params.email },
-        })
-
-        if (user) {
-          return res.status(200).json({
-            data: Json.format(user)
-          });
-        }
-
-        return res.status(404).json({
-          message: 'Didn’t find anything here!'
-        });
-      }
-      catch (err) {
-        res.status(500).json({ message: 'something is broken' })
-      }
-    });
-  }
-
   uploadAvatar() {
     this.router.post("/users/uploadavatar", handleImage.single('avatar'), async (req, res) => {
       try {
@@ -131,32 +194,6 @@ module.exports = class Users {
         if (file) res.status(200).json({ message: file })
       }
       catch (err) {
-        res.status(500).json({ message: 'something is broken' })
-      }
-    });
-  }
-
-  findUsersList() {
-    this.router.get('/users', async (req, res) => {
-      try {
-        const { include } = req.query;
-
-        if (include === 'interests') {
-          const userWithInterests = await User.findAll({
-            include: [{ model: Interests }]
-          })
-
-          return res.status(200).json({
-            data: userWithInterests
-          })
-        }
-
-        res.status(200).json({
-          data: await User.findAll().map(user => Json.format(user))
-        })
-      }
-      catch (err) {
-        console.log(err)
         res.status(500).json({ message: 'something is broken' })
       }
     });
