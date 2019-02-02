@@ -40,7 +40,11 @@ class Server {
         path: '/users',
         methods: ['POST']
       },
-        {
+      {
+        path: '/interests',
+        methods: ['GET']
+      },
+      {
         path: '/login',
         methods: ['POST']
       },
