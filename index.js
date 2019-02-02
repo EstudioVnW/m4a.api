@@ -8,7 +8,6 @@ const StatusService = require('./app/services/status-service');
 const UserService = require('./app/services/user-service');
 const InitiativeService = require('./app/services/initiative-service.js');
 const InterestService = require('./app/services/interest-service');
-const MatchesService = require('./app/services/matches-service')
 const Login = require('./app/services/auth-service');
 
 const swaggerUi = require('swagger-ui-express');
@@ -57,7 +56,6 @@ class Server {
     new InitiativeService(this.router).expose();
     new Login(this.router).expose();
     new InterestService(this.router).expose();
-    new MatchesService(this.router).expose();
 
     this.app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     this.app.use('/', this.router);
