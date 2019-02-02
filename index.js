@@ -64,7 +64,7 @@ class Server {
     this.app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     this.app.use('/', this.router);
     this.app.listen(port, () => {
-      console.log(`Readyy! http://localhost:${port}/`);
+      console.log(`Ready! http://localhost:${port}/`);
     });
   }
 }
