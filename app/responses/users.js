@@ -18,7 +18,7 @@ const UserJson = {
         allowToRemote: user.allowToRemote,
         userStatus: user.userStatus,
         userProfile: user.userProfile,
-        matches: user.Initiatives.map(initiative => ({
+        matches: user.Initiatives && user.Initiatives.map(initiative => ({
           id: initiative.id,
           name: initiative.name,
           website: initiative.website,
