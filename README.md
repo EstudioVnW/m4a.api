@@ -21,5 +21,5 @@ NODE_ENV=test node_modules/.bin/sequelize db:migrate
 ## test
 
 ```
-npm run test
+npm test
 ```

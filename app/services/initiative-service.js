@@ -84,12 +84,28 @@ module.exports = class Initiatives {
           })
 
           return res.status(200).json({
-            data: initiativeWithInterests
+            data: initiativeWithInterests.map(initiative => {
+              return Json.format(initiative)
+            })
           })
         }
 
         return res.status(200).json({
-          data: await Initiative.findAll().map(initiative => Json.format(initiative))
+          data: await Initiative.findAll().map(initiative => {
+            return {
+              type: `Initiative`,
+              id: initiative.id,
+              attributes: {
+                name: initiative.name,
+                website: initiative.website,
+                avatar: initiative.avatar,
+                bio: initiative.bio,
+                country: initiative.country,
+                city: initiative.city,
+                userId: initiative.userId
+              }
+            }
+          })
         })
       }
       catch (err) {

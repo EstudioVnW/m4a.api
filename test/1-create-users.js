@@ -9,7 +9,7 @@ describe('Create a new user', () => {
 
   let user = {
       "username": "dalinha2",
-      "email": "dali11@gmial.com",
+      "email": "dali3@gmial.com",
       "latlong": {
         "type": "Point",
         "coordinates": [
@@ -17,17 +17,10 @@ describe('Create a new user', () => {
             -76.984722
         ]
       },
-      "userProfile": "Volunteer",
-      "UsersInterests": [
-          {
-            "interestDescription": "Cooking",
-            "interestType": "Skills"
-          }
-      ]
+      "userProfile": "Volunteer"
   }
 
   it('should create an user', (done) => {
-
     chai.request(server.app)
       .post('/users')
       .set('content-type', 'application/json')
@@ -35,7 +28,8 @@ describe('Create a new user', () => {
       .end((err, res, body) => {
         if (err) {
           done(err);
-        } else {
+        }
+        else {
           expect(res).to.have.status(200);
           expect(res).to.be.json;
           expect(res.body).to.have.property('data');
@@ -55,7 +49,8 @@ describe('Create a new user', () => {
       .end((err, res, body) => {
         if (err) {
           done(err);
-        } else {
+        }
+        else {
           expect(res).to.have.status(200);
           expect(res).to.be.json;
           expect(res.body).to.have.property('data');

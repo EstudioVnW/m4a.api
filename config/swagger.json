@@ -4,7 +4,7 @@
     "version": "1.0.0",
     "title": "Match4Action API"
   },
-  "host": "test-m4a-api.now.sh",
+  "host": "localhost:3000",
   "basePath": "/",
   "tags": [
     {

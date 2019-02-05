@@ -25,7 +25,13 @@ const UserJson = {
           bio: initiative.bio,
           avatar: initiative.avatar
         })),
-        usersInterests: user.UsersInterests,
+        usersInitiatives: user.UserInitiatives && user.UserInitiatives.map(initiative => ({
+          id: initiative.id,
+          name: initiative.name,
+          website: initiative.website,
+          bio: initiative.bio,
+          avatar: initiative.avatar
+        })),
         createdAt: user.createdAt,
         updatedAt: user.updatedAt
       }

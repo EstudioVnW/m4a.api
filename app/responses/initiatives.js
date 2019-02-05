@@ -18,13 +18,19 @@ const InitiativeJson = {
         eventType: initiative.eventType,
         start: initiative.start,
         finish: initiative.finish,
-        createdAt: initiative.createdAt,
-        updatedAt: initiative.updatedAt,
         userId: initiative.UserId,
-        initiativesInterests: initiative.InitiativesInterests
+        interests: initiative.Interests && initiative.Interests.map(interest => ({
+          id: interest.id,
+          description: interest.description,
+          type: interest.type,
+          bio: interest.bio,
+          avatar: interest.avatar
+        })),
+        createdAt: initiative.createdAt,
+        updatedAt: initiative.updatedAt
       }
-    };
+    }
   }
-};
+}
 
 module.exports = InitiativeJson;
