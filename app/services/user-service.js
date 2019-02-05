@@ -42,9 +42,13 @@ module.exports = class Users {
         })
       }
       catch (err) {
-        res.status(500).json({
-          message: 'something is broken'
-        })
+        const error = { message: err.message }
+        const errors = err.errors && err.errors.map(err => ({
+          message: err.message,
+          type: err.type,
+          field: err.path
+        }))
+        res.status(500).json(errors || error)
       }
     });
   }
@@ -61,9 +65,15 @@ module.exports = class Users {
           relationships: { interests },
           token: token
         })
-      }      
+      }
       catch (err) {
-        res.status(500).json(err)
+        const error = { message: err.message }
+        const errors = err.errors && err.errors.map(err => ({
+          message: err.message,
+          type: err.type,
+          field: err.path
+        }))
+        res.status(500).json(errors || error)
       }
     });
   }

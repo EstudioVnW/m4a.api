@@ -27,7 +27,7 @@ module.exports = class Initiatives {
         if (req.body.interests) {
           const interests = await initiative.setInterests(req.body.interests);
           res.status(200).json({
-            data: initiative,
+            data: longJson.format(initiative),
             relationships: {
               interests
             }
@@ -35,11 +35,18 @@ module.exports = class Initiatives {
         }
         
         res.status(200).json({
-          data: initiative
+          data: longJson.format(initiative)
         })
       }
+
       catch (err) {
-        res.status(500).json(err)
+        const error = { message: err.message }
+        const errors = err.errors && err.errors.map(err => ({
+          message: err.message,
+          type: err.type,
+          field: err.path
+        }))
+        res.status(500).json(errors || error)
       }
     });
   }
@@ -50,7 +57,7 @@ module.exports = class Initiatives {
         const initiative = await Initiative.findOne({
           where: { id: req.params.initiativeId }
         })
-        
+
         if (initiative) {
           return res.status(200).json({
             data: longJson.format(initiative)
@@ -75,7 +82,7 @@ module.exports = class Initiatives {
 
           return res.status(200).json({
             data: result.map(initiative => {
-              shortJson.format(initiative)
+              return shortJson.format(initiative)
             })
           })
         }
@@ -87,15 +94,14 @@ module.exports = class Initiatives {
 
           return res.status(200).json({
             data: initiativeWithInterests.map(initiative => {
-              shortJson.format(initiative)
+              return shortJson.format(initiative)
             })
           })
         }
 
         return res.status(200).json({
           data: await Initiative.findAll().map(initiative => {
-            shortJson.format(initiative)
-          })
+            return shortJson.format(initiative)})
         })
       }
       catch (err) {

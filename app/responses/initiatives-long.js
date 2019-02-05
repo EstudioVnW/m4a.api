@@ -1,4 +1,4 @@
-const InitiativeJson = {
+const longJson = {  
   format: (initiative) => {
     return {
       type: `Initiative`,
@@ -33,4 +33,4 @@ const InitiativeJson = {
   }
 }
 
-module.exports = InitiativeJson;
+module.exports = longJson;
