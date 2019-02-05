@@ -2,7 +2,8 @@
 const { Initiative, Match, User, Interests, InitiativesImages } = require('../../domain/entities');
 const { InitiativeRepository } = require('../../domain/repositories');
 
-const Json = require('../responses/initiatives');
+const shortJson = require('../responses/initiatives-short.js');
+const longJson = require('../responses/initiatives-long.js');
 const { loggedUser } = require('../../domain/auth')
 const { sendPhotos, handleImage } = require('../../domain/firebaseStorage');
 
@@ -22,6 +23,7 @@ module.exports = class Initiatives {
     this.router.post('/initiatives', async (req, res) => {
       try {
         const initiative = await Initiative.create(req.body)
+        
         if (req.body.interests) {
           const interests = await initiative.setInterests(req.body.interests);
           res.status(200).json({
@@ -31,12 +33,12 @@ module.exports = class Initiatives {
             }
           })
         }
+        
         res.status(200).json({
           data: initiative
         })
       }
       catch (err) {
-        console.log(err)
         res.status(500).json(err)
       }
     });
@@ -46,15 +48,13 @@ module.exports = class Initiatives {
     this.router.get('/initiatives/:initiativeId', async (req, res) => {
       try {
         const initiative = await Initiative.findOne({
-          where: { id: req.params.initiativeId },
-          include: [{
-            model: Match,
-            include: [User]
-          }]
+          where: { id: req.params.initiativeId }
         })
         
         if (initiative) {
-          return res.status(200).json({ data: initiative });
+          return res.status(200).json({
+            data: longJson.format(initiative)
+          });
         }
 
         return res.status(404).json({
@@ -70,14 +70,16 @@ module.exports = class Initiatives {
   findInitiativesList() {
     this.router.get('/initiatives', async (req, res) => {
       try {
-        // nearest
         if (req.query.nearest) {
           const result = await InitiativeRepository.findNearest(await loggedUser(req))
+
           return res.status(200).json({
-            data: result.map(initiative => Json.format(initiative))
+            data: result.map(initiative => {
+              shortJson.format(initiative)
+            })
           })
         }
-        // initiatives-interests
+
         if (req.query.include === 'interests') {
           const initiativeWithInterests = await Initiative.findAll({
             include: [{ model: Interests }]
@@ -85,26 +87,14 @@ module.exports = class Initiatives {
 
           return res.status(200).json({
             data: initiativeWithInterests.map(initiative => {
-              return Json.format(initiative)
+              shortJson.format(initiative)
             })
           })
         }
 
         return res.status(200).json({
           data: await Initiative.findAll().map(initiative => {
-            return {
-              type: `Initiative`,
-              id: initiative.id,
-              attributes: {
-                name: initiative.name,
-                website: initiative.website,
-                avatar: initiative.avatar,
-                bio: initiative.bio,
-                country: initiative.country,
-                city: initiative.city,
-                userId: initiative.userId
-              }
-            }
+            shortJson.format(initiative)
           })
         })
       }
