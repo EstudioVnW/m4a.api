@@ -16,16 +16,6 @@ describe('Users', () => {
       })
   });
 */
-  describe('/GET user', () => {
-    it('it should GET all the users', (done) => {
-      chai.request(server.app)
-        .get('/')
-        .end((err, res) => {
-          res.should.have.status(200);
-          done();
-        });
-    });
-  });
 
   describe('/POST user', () => {
     it('it should not POST a user without pages field', (done) => {
