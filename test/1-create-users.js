@@ -18,9 +18,9 @@ describe('Users', () => {
 */
 
   describe('/POST user', () => {
-    it('it should not POST a user without pages field', (done) => {
+    it('it should not POST an user', (done) => {
       let user = {
-        "email": "dalivieiraa8@gmail.com",
+        "email": "dalivieiraaa8@gmail.com",
         "username": "dali",
         "userProfile": "Volunteer",
         "interests": [58, 59, 60]
@@ -29,9 +29,8 @@ describe('Users', () => {
         .post('/users')
         .send(user)
         .end((err, res) => {
-          console.log(res.body)
           res.should.have.status(200);
-          res.body.should.be.a('object');
+          res.body.should.be.an('object');
           res.body.should.have.property('data');
           res.body.should.have.property('token');
           res.body.should.have.property('relationships');
