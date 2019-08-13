@@ -35,7 +35,7 @@ module.exports = class Initiatives {
           });
         }
 
-        res.status(201).json({
+        return res.status(201).json({
           data: {
             type: 'Initiative',
             id: initiative.id,
@@ -48,9 +48,13 @@ module.exports = class Initiatives {
           type: error.type,
           field: error.path,
         }));
-        res.status(500).json([{
-          message: err.name || errors,
-        }]);
+        return res.status(500).json({
+          errors: [
+            {
+              message: err.name || errors,
+            },
+          ],
+        });
       }
     });
   }
@@ -85,7 +89,7 @@ module.exports = class Initiatives {
         });
       } catch (err) {
         console.log('er', err);
-        res.status(500).json({
+        return res.status(500).json({
           errors: [err],
         });
       }
@@ -118,7 +122,7 @@ module.exports = class Initiatives {
         });
       } catch (err) {
         console.log(err);
-        res.status(500).json({
+        return res.status(500).json({
           errors: [err],
         });
       }
@@ -160,7 +164,7 @@ module.exports = class Initiatives {
           });
         }
       } catch (err) {
-        res.status(500).json({
+        return res.status(500).json({
           errors: [err],
         });
       }
@@ -184,7 +188,7 @@ module.exports = class Initiatives {
         });
       } catch (err) {
         console.log(err);
-        res.status(500).json({
+        return res.status(500).json({
           errors: [err],
         });
       }
