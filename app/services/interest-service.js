@@ -1,4 +1,3 @@
-'use strict';
 const { Interests } = require('../../domain/entities');
 
 module.exports = class Initiatives {
@@ -17,11 +16,12 @@ module.exports = class Initiatives {
     this.router.get('/interests', async (req, res) => {
       try {
         res.status(200).json({
-          data: await Interests.findAll()
-        })
-      }
-      catch (err) {
-        res.status(500).json(err)
+          data: await Interests.findAll(),
+        });
+      } catch (err) {
+        res.status(500).json({
+          errors: [err],
+        });
       }
     });
   }
@@ -31,12 +31,13 @@ module.exports = class Initiatives {
       try {
         res.status(200).json({
           data: await Interests.findAll({
-            where: { type: req.params.type }
-          })
-        })
-      }
-      catch (err) {
-        res.status(500).json(err)
+            where: { type: req.params.type },
+          }),
+        });
+      } catch (err) {
+        res.status(500).json({
+          errors: [err],
+        });
       }
     });
   }
@@ -81,5 +82,4 @@ module.exports = class Initiatives {
   //     }
   //   });
   // }
-
 };
