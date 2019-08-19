@@ -14,7 +14,7 @@ module.exports = class Users {
   }
 
   createMatch() {
-    this.router.post('/users/:userId/match/:initiativeId', async (req, res) => {
+    this.router.post('/user/:userId/match/:initiativeId', async (req, res) => {
       try {
         const user = await User.findOne({
           where: { id: req.params.userId },
@@ -32,7 +32,7 @@ module.exports = class Users {
           const match = await Matches.create({
             InitiativeId: req.params.initiativeId,
             UserId: req.params.userId,
-            liked: 1,
+            liked: req.body.liked,
           });
           return res.status(200).json({
             data: {
@@ -56,7 +56,7 @@ module.exports = class Users {
   }
 
   removeMatch() {
-    this.router.delete('/users/:userId/match/:initiativeId', async (req, res) => {
+    this.router.delete('/user/:userId/match/:initiativeId', async (req, res) => {
       try {
         const token = await loggedUser(req);
         const user = await User.findOne({
