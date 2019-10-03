@@ -2,7 +2,7 @@ const { Op } = require('sequelize');
 const {
   Initiative, Interests, InitiativesImages, Matches, User,
 } = require('../../domain/entities');
-const { uploadImage } = require('../../infra/cloud-storage');
+const { uploadImage, deleteImage, storageBucket } = require('../../infra/cloud-storage');
 const { multer } = require('../../infra/helpers');
 const { InitiativeRepository } = require('../../domain/repositories');
 const { loggedUser } = require('../../domain/auth');
@@ -22,6 +22,8 @@ module.exports = class Initiatives {
     this.deleteInitiative();
     this.updateInitiative();
     this.updateInitiativeInterests();
+    this.removePhoto();
+    this.uploadPhoto();
   }
 
   createInitiative() {
@@ -142,7 +144,7 @@ module.exports = class Initiatives {
           });
           if (req.query.nearest) {
             const result = await InitiativeRepository.findNearest(user, IdMatches);
-  
+
             if (result) {
               return res.status(200).json({
                 data: result.map((initiative) => shortJson.format(initiative)),
@@ -170,30 +172,26 @@ module.exports = class Initiatives {
     });
   }
 
-  uploadPhotos() {
-    this.router.post('/initiative/photos/:initiativeId', multer.array('image', 5), async (req, res) => {
+  uploadPhoto() {
+    this.router.post('/initiative/:initiativeId/photo', multer.single('image'), async (req, res) => {
       try {
-        const find = await Initiative.findOne({
+        const initiative = await Initiative.findOne({
           where: { id: req.params.initiativeId },
         });
 
-        if (find) {
-          const saveFirebase = await Promise.all(
-            req.files.map((item) => uploadImage(item, find.name)),
-          );
-          if (saveFirebase) {
-            const saveMySQL = await Promise.all(
-              saveFirebase.map((item) => {
-                InitiativesImages.create({
-                  InitiativeId: req.params.initiativeId,
-                  image: item,
-                });
-              }),
-            );
+        if (initiative) {
+          const image = await uploadImage(req.file, initiative.name);
 
-            if (saveMySQL) {
+          if (image) {
+            const persist = await InitiativesImages.create({
+              InitiativeId: req.params.initiativeId,
+              image: `https://${storageBucket}.storage.googleapis.com/${image}`,
+              name: image,
+            });
+
+            if (persist) {
               return res.status(200).json({
-                data: saveFirebase,
+                data: persist,
               });
             }
           }
@@ -205,6 +203,83 @@ module.exports = class Initiatives {
           });
         }
       } catch (err) {
+        console.log('err', err);
+        return res.status(500).json({
+          errors: [err],
+        });
+      }
+    });
+  }
+
+  removePhoto() {
+    this.router.delete('/initiative/:initiativeId/photo/:photoId', multer.single('image'), async (req, res) => {
+      try {
+        const image = await InitiativesImages.findOne({
+          where: { id: req.params.photoId },
+          include: [Initiative],
+        });
+
+        if (image) {
+          const removed = await deleteImage(image.name);
+
+          if (removed) {
+            await InitiativesImages.destroy({
+              where: { id: req.params.photoId },
+            });
+            return res.status(200).json({
+              message: 'Image has been deleted.',
+            });
+          }
+        }
+        return res.status(404).json({
+          errors: [{
+            message: 'Didn’t find anything here!',
+          }],
+        });
+      } catch (err) {
+        return res.status(500).json({
+          errors: [err],
+        });
+      }
+    });
+  }
+
+  uploadPhotos() {
+    this.router.post('/initiative/photos/:initiativeId', multer.array('image', 5), async (req, res) => {
+      try {
+        const find = await Initiative.findOne({
+          where: { id: req.params.initiativeId },
+        });
+
+        if (find) {
+          const saveFirebase = await Promise.all(
+            req.files.map((item) => uploadImage(item, find.name)),
+          );
+
+          if (saveFirebase) {
+            const persist = await Promise.all(
+              saveFirebase.map((item) => InitiativesImages.create({
+                InitiativeId: req.params.initiativeId,
+                image: `https://${storageBucket}.storage.googleapis.com/${item}`,
+                name: item,
+              })),
+            );
+
+            if (persist) {
+              return res.status(200).json({
+                data: persist,
+              });
+            }
+          }
+        } else {
+          return res.status(404).json({
+            errors: [{
+              message: 'Didn’t find anything here!',
+            }],
+          });
+        }
+      } catch (err) {
+        console.log('err', err);
         return res.status(500).json({
           errors: [err],
         });
