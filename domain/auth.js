@@ -150,7 +150,7 @@ const loginFB = async (info) => {
       ],
     });
   }
-  if (!info.id) {
+  if (user === null) {
     user = await User.findOne({
       where: { username: info.name },
       include: [
