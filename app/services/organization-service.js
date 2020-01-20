@@ -2,6 +2,7 @@ const { Organization, Interests } = require('../../domain/entities');
 const { loggedUser } = require('../../domain/auth');
 const { uploadImage, bucket } = require('../../infra/cloud-storage');
 const { multer } = require('../../infra/helpers');
+const orgFormat = require('../responses/orgs-long');
 
 module.exports = class Initiatives {
   constructor(router) {
@@ -19,14 +20,21 @@ module.exports = class Initiatives {
       try {
         const data = await Organization.findOne({
           where: { id: req.params.organizationId },
+          include: [Interests],
         });
-
         if (data) {
           return res.status(200).json({
             data: {
               type: 'Organization',
               id: data.id,
-              attributes: data,
+              attributes: orgFormat.format(data),
+              relationships: {
+                interests: data.Interests.map(interest => ({
+                  id: interest.id,
+                  description: interest.description,
+                  type: interest.type,
+                }))
+              }
             },
           });
         }
@@ -49,7 +57,7 @@ module.exports = class Initiatives {
         const user = await loggedUser(req); 
 
         let newOrg = req.body
-        newOrg.id_admin = user.id
+        newOrg.idAdmin = user.id
         
         let data = await Organization.create(newOrg)
 
@@ -64,7 +72,7 @@ module.exports = class Initiatives {
             data: {
               type: 'Organization',
               id: data.id,
-              attributes: data,
+              attributes: orgFormat.format(data),
               relationships: {
                 interests: org.Interests && org.Interests.map((interest) => ({
                   id: interest.id,
@@ -80,7 +88,7 @@ module.exports = class Initiatives {
           data: {
             type: 'Organization',
             id: data.id,
-            attributes: data
+            attributes: orgFormat.format(data),
           },
         });
       }
@@ -102,7 +110,7 @@ module.exports = class Initiatives {
           const org = await Organization.findOne({
             where: { id: organizationId },
           });
-          if (org.id_admin == user.id) {
+          if (org.idAdmin == user.id) {
             const image = await uploadImage(req.file, org.name);
             if (image) {
               const data = await org.update(
@@ -113,14 +121,14 @@ module.exports = class Initiatives {
                 data: {
                   type: 'Organization',
                   id: data.id,
-                  attributes: data,
+                  attributes: orgFormat.format(data),
                 },
               });
             }
           }
           return res.status(403).json({
             errors: [{
-              message: 'this initiative is not yours',
+              message: 'this organization is not yours',
             }],
           });
         }
