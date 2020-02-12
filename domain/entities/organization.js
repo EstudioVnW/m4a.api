@@ -35,28 +35,27 @@ module.exports = (sequelize, DataTypes) => {
     address: DataTypes.STRING,
     latlong: DataTypes.GEOMETRY('POINT', 4326),
     zipcode: DataTypes.STRING,
-    idCommittee: DataTypes.INTEGER,
+    OrganizationId: DataTypes.INTEGER,
   },
-    {
-      paranoid: true,
-      timestamps: true
-    }
-  );
+  {
+    paranoid: true,
+    timestamps: true,
+  });
 
-  
+
   Organization.associate = (models) => {
-    Organization.belongsTo(models.User, { foreignKey: 'idAdmin'});
-    Organization.belongsToMany(models.Interests, { through: 'OrganizationsInterests' });
+    Organization.hasMany(models.Initiative, { foreignKey: 'OrganizationId', as: 'OrganizationInitiatives' });
+    Organization.belongsTo(models.User, { foreignKey: 'idAdmin' });
     Organization.hasMany(Organization, {
       as: 'Committee',
-      foreignKey: 'idCommittee',
-      useJunctionTable: false
-    })
+      foreignKey: 'OrganizationId',
+      useJunctionTable: false,
+    });
     Organization.hasOne(Organization, {
       as: 'Organization',
-      foreignKey: 'idCommittee',
-      useJunctionTable: false
-    })
+      foreignKey: 'OrganizationId',
+      useJunctionTable: false,
+    });
   };
 
   return Organization;

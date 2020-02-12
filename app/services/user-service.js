@@ -1,13 +1,14 @@
 const {
-  User, Initiative, Matches, Interests, InitiativesImages, Organization
+  User, Initiative, Matches, Interests, InitiativesImages, Organization,
 } = require('../../domain/entities');
 const { uploadImage, storageBucket } = require('../../infra/cloud-storage');
 const { multer } = require('../../infra/helpers');
-const { login, loginFB } = require('../../domain/auth');
+const { login } = require('../../domain/auth');
 const { loggedUser } = require('../../domain/auth');
 const usersShortFormat = require('../responses/users-short');
-const userLong = require('../responses/users-long');
+const userFormat = require('../responses/users-long');
 const orgFormat = require('../responses/orgs-long');
+const initFormat = require('../responses/initiatives-long.js');
 
 module.exports = class Users {
   constructor(router) {
@@ -39,7 +40,7 @@ module.exports = class Users {
             data: {
               type: 'User',
               id: user.id,
-              attributes: userLong.format(user),
+              attributes: userFormat.format(user),
               relationships: {
                 interests: user.Interests,
               },
@@ -67,13 +68,14 @@ module.exports = class Users {
           where: {
             id: req.params.id,
           },
-          include: [
-            {
-              model: Initiative,
-              as: 'UserInitiatives',
-              include: [InitiativesImages, Interests],
-            },
-          ],
+        });
+        const initiatives = await Initiative.findAll({
+          where: {
+            UserId: req.params.id,
+            OrganizationId: null,
+            deletedAt: null,
+          },
+          include: [InitiativesImages, Interests],
         });
         const matches = await Matches.findAll({
           where: {
@@ -83,6 +85,9 @@ module.exports = class Users {
           include: [
             {
               model: Initiative,
+              where: {
+                deletedAt: null,
+              },
               include: [InitiativesImages, Interests],
             },
           ],
@@ -92,10 +97,18 @@ module.exports = class Users {
             data: {
               type: 'User',
               id: user.id,
-              attributes: userLong.format(user),
+              attributes: userFormat.format(user),
               relationships: {
-                userInitiatives: user.UserInitiatives,
-                matches: matches.map((item) => item.Initiative),
+                initiatives: initiatives && initiatives.map((init) => ({
+                  type: 'Initiative',
+                  id: init.id,
+                  attributes: initFormat.format(init),
+                })),
+                matches: matches && matches.map((item) => ({
+                  type: 'Initiative',
+                  id: item.id,
+                  attributes: initFormat.format(item.Initiative),
+                })),
               },
             },
           });
@@ -147,24 +160,23 @@ module.exports = class Users {
           );
           const token = await login(user.email);
           res.setHeader('Authorization', `Bearer ${token}`);
-          res.status(200).json({
+          return res.status(200).json({
             data: {
               type: 'User',
               id: user.id,
-              attributes: userLong.format(update.dataValues),
+              attributes: userFormat.format(update.dataValues),
               token,
             },
           });
-        } else {
-          return res.status(404).json({
-            errors: [{
-              message: 'Didn’t find anything here!',
-            }],
-          });
         }
+        return res.status(404).json({
+          errors: [{
+            message: 'Didn’t find anything here!',
+          }],
+        });
       } catch (err) {
         console.log(err);
-        res.status(500).json({
+        return res.status(500).json({
           errors: [err],
         });
       }
@@ -175,19 +187,33 @@ module.exports = class Users {
     this.router.post('/user', async (req, res) => {
       try {
         const newUser = await User.create(req.body);
-        const token = await login(req.body.email);
+
+        const token = await login(req.body.email || req.body.facebookId);
+
         if (req.body.interests) {
           await newUser.setInterests(req.body.interests);
-          const user = await User.findOne({
-            where: { email: req.body.email },
-            include: [Interests],
-          });
+
+          let user = null;
+          if (req.body.email) {
+            user = await User.findOne({
+              where: { email: req.body.email },
+              include: [Interests],
+            });
+          }
+
+          if (req.body.facebookId) {
+            user = await User.findOne({
+              where: { facebookId: req.body.facebookId },
+              include: [Interests],
+            });
+          }
+
           res.setHeader('Authorization', `Bearer ${token}`);
-          res.status(201).json({
+          return res.status(201).json({
             data: {
               type: 'User',
               id: user.id,
-              attributes: userLong.format(user),
+              attributes: userFormat.format(user),
               relationships: {
                 interests: user.Interests && user.Interests.map((interest) => ({
                   id: interest.id,
@@ -198,18 +224,17 @@ module.exports = class Users {
               token,
             },
           });
-        } else {
-          res.status(201).json({
-            data: {
-              type: 'User',
-              id: newUser.id,
-              attributes: userLong.format(newUser),
-              token,
-            },
-          });
         }
+        return res.status(201).json({
+          data: {
+            type: 'User',
+            id: newUser.id,
+            attributes: userFormat.format(newUser),
+            token,
+          },
+        });
       } catch (err) {
-        console.log(err)
+        console.log(err);
         return res.status(500).json({
           errors: [err],
         });
@@ -230,14 +255,14 @@ module.exports = class Users {
             const image = await uploadImage(file, username);
             if (image) {
               const data = await user.update(
-                { avatar: `https://${storageBucket}.storage.googleapis.com/${image}`, },
+                { avatar: `https://${storageBucket}.storage.googleapis.com/${image}` },
                 { where: { id: user.id } },
               );
               res.status(200).json({
                 data: {
                   type: 'User',
                   id: data.id,
-                  attributes: userLong.format(data),
+                  attributes: userFormat.format(data),
                 },
               });
             }
@@ -275,13 +300,12 @@ module.exports = class Users {
               message: 'User has been deleted.',
             });
           }
-        } else {
-          return res.status(404).json({
-            errors: [{
-              message: 'Didn’t find anything here!',
-            }],
-          });
         }
+        return res.status(404).json({
+          errors: [{
+            message: 'Didn’t find anything here!',
+          }],
+        });
       } catch (err) {
         console.log(err);
         return res.status(500).json({
@@ -294,45 +318,41 @@ module.exports = class Users {
   findUsersList() {
     this.router.get('/users', async (req, res) => {
       try {
-        res.status(200).json({
+        return res.status(200).json({
           data: await User.findAll().map((user) => usersShortFormat.format(user)),
         });
       } catch (err) {
         console.log(err);
-        res.status(500).json(err.errors && err.errors.map((error) => ({
-          message: error.message,
-          type: error.type,
-        })));
+        return res.status(500).json({
+          errors: [err],
+        });
       }
     });
   }
 
-
   findOrgsByUser() {
-    this.router.get('/user/:id/organizations', async (req, res) => {
+    this.router.get('/user/:userId/organizations', async (req, res) => {
       try {
         const data = await Organization.findAll({
           where: {
-            idAdmin: req.params.id,
+            idAdmin: req.params.userId,
           },
-          include: [Interests],
-        })
-        res.status(200).json({
-          data: data.map((org => ({
-            type: 'Organization',
-            id: org.id,
-            attributes: orgFormat.format(org),
-            relationships: {
-              interests: org.Interests.map(interest => ({
-                id: interest.id,
-                description: interest.description,
-                type: interest.type,
-              }))
-            }
-          })))
+        });
+        if (data) {
+          return res.status(200).json({
+            data: data.map(((org) => ({
+              type: 'Organization',
+              id: org.id,
+              attributes: orgFormat.format(org),
+            }))),
+          });
+        }
+        return res.status(404).json({
+          errors: [{
+            message: 'Didn’t find anything here!',
+          }],
         });
       } catch (err) {
-        console.log(err);
         return res.status(500).json({
           errors: [err],
         });

@@ -11,14 +11,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     email: {
       type: DataTypes.STRING,
-      allowNull: false,
       unique: {
         msg: 'email must be unique',
       },
       validate: {
-        notEmpty: {
-          msg: "email can't be empty",
-        },
         isEmail: {
           msg: 'email must be an email',
         },
@@ -43,16 +39,7 @@ module.exports = (sequelize, DataTypes) => {
     zipcode: DataTypes.STRING,
     facebookId: DataTypes.STRING,
     allowToRemote: DataTypes.INTEGER,
-    userProfile: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        isIn: {
-          args: [['Organization', 'Volunteer']],
-          msg: 'userProfile must be an Organization or a Volunteer using lowercase',
-        },
-      },
-    },
+    userProfile: DataTypes.STRING,
     userStatus: {
       type: DataTypes.INTEGER,
       defaultValue: 1,
@@ -65,13 +52,12 @@ module.exports = (sequelize, DataTypes) => {
     },
     valeLink: DataTypes.STRING,
   },
-    {
-      paranoid: true,
-      timestamps: true
-    }
-  );
+  {
+    paranoid: true,
+    timestamps: true,
+  });
 
-  User.associate = (models) => { 
+  User.associate = (models) => {
     User.hasMany(models.Initiative, { foreignKey: 'UserId', as: 'UserInitiatives' });
 
     User.hasMany(models.Organization, { foreignKey: 'idAdmin', as: 'userOrganizations' });

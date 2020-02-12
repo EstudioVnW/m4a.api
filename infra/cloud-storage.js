@@ -1,10 +1,12 @@
 const admin = require('firebase-admin');
 
+var serviceAccount = require('../firebase-adminsdk.json');
+
 const storageBucket = 'match4action-9e993.appspot.com';
 
 admin.initializeApp({
   storageBucket,
-  credential: admin.credential.cert('./firebase-adminsdk.json'),
+  credential: admin.credential.cert(serviceAccount),
 });
 
 const bucket = admin.storage().bucket();
@@ -51,7 +53,7 @@ const getImage = async (imageName) => {
 const deleteImage = async (imageName) => {
   try {
     const file = await bucket.file(imageName);
-    return await file.remove();
+    return await file.delete();
   } catch (err) {
     console.log(err);
     return err;
