@@ -1,6 +1,6 @@
 const { Op } = require('sequelize');
 const {
-  Initiative, Interests, InitiativesImages, Matches, User,
+  Organization, Initiative, Interests, InitiativesImages, Matches, User,
 } = require('../../domain/entities');
 const { uploadImage, deleteImage, storageBucket } = require('../../infra/cloud-storage');
 const { multer } = require('../../infra/helpers');
@@ -156,7 +156,22 @@ module.exports = class Initiatives {
 
             if (result) {
               return res.status(200).json({
-                data: result.map((initiative) => shortJson.format(initiative)),
+                data: result.map((initiative) => ({
+                  type: 'Initiatives',
+                  id: initiative.id,
+                  attributes: shortJson.format(initiative),
+                  relationships: {
+                    interests: initiative.Interests && initiative.Interests.map((interest) => ({
+                      id: interest.id,
+                      description: interest.description,
+                      type: interest.type,
+                    })),
+                    images: initiative.InitiativesImages && initiative.InitiativesImages.map((img) => ({
+                      id: img.id,
+                      image: img.image,
+                    })),
+                  },
+                })),
               });
             }
             return res.status(500).json({
@@ -164,7 +179,22 @@ module.exports = class Initiatives {
             });
           }
           return res.status(200).json({
-            data: initiatives.map((initiative) => shortJson.format(initiative)),
+            data: initiatives.map((initiative) => ({
+              type: 'Initiatives',
+              id: initiative.id,
+              attributes: shortJson.format(initiative),
+              relationships: {
+                interests: initiative.Interests && initiative.Interests.map((interest) => ({
+                  id: interest.id,
+                  description: interest.description,
+                  type: interest.type,
+                })),
+                images: initiative.InitiativesImages && initiative.InitiativesImages.map((img) => ({
+                  id: img.id,
+                  image: img.image,
+                })),
+              },
+            })),
           });
         }
         return res.status(404).json({
@@ -321,6 +351,24 @@ module.exports = class Initiatives {
           where: { id: req.params.initiativeId },
         });
         if (initiative) {
+          if (initiative.ownerType === 'committee') {
+            const committee = await Organization.findOne({
+              where: { id: initiative.OrganizationId },
+            });
+            if (committee.idAdmin === user.id || user.id === initiative.UserId) {
+              await Initiative.destroy({
+                where: { id: req.params.initiativeId },
+              });
+              return res.status(200).json({
+                message: 'Initiative has been deleted.',
+              });
+            }
+            return res.status(403).json({
+              errors: [{
+                message: 'This is not your initiative!',
+              }],
+            });
+          }
           if (user.id === initiative.UserId) {
             await Initiative.destroy({
               where: { id: req.params.initiativeId },

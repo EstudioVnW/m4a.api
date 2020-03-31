@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const url = require('url');
 const { Op } = require('sequelize');
 const {
   User, Interests, Initiative, Matches,
@@ -11,52 +12,28 @@ const UsersLong = require('../app/responses/users-long');
 
 const secret = config.jwtSecret;
 
-const login = async (email) => {
-  const user = await User.findOne({
-    where: { email },
-    include: [
-      Interests,
-      {
-        model: Initiative,
-        as: 'UserInitiatives',
-      },
-    ],
-  });
-  if (!user) {
+const handleDecode = async (req) => {
+  try {
+    const authorization = req.header('Authorization');
+    const token = authorization.replace('Bearer ', '');
+    const decoded = jwt.verify(token, secret);
+
+    return decoded;
+  } catch (err) {
     return undefined;
   }
-  const matches = await Matches.findAll({
-    where: {
-      UserId: user.id,
-      liked: true,
-    },
-    include: [
-      Initiative,
-    ],
-  });
-
-  const data = {
-    id: user.id,
-    ...UsersLong.format(user),
-    Interests: user.Interests.map((item) => ({
-      id: item.id,
-      description: item.description,
-      type: item.type,
-    })),
-    listening_groups: [
-      ...user.UserInitiatives.filter((item) => item.muted !== true).map((item) => ({
-        id: item.id,
-        name: item.name,
-      })),
-      ...matches.filter((item) => item.muted !== true).map((item) => ({
-        id: item.Initiative.id,
-        name: item.Initiative.name,
-      })),
-    ],
-  };
-
-  return await auth(data);
 };
+
+const auth = async (data) => jwt.sign({
+  sub: data.id,
+  info: data,
+  aud: 'Match4Action',
+  iss: 'Match4Action',
+},
+secret, {
+  expiresIn: '7d',
+});
+
 
 const loggedUser = async (req) => {
   try {
@@ -75,14 +52,31 @@ const loggedUser = async (req) => {
 
 const requiresAuth = (allowedRoutes) => (req, res, next) => {
   if (req.originalUrl.includes('docs')) return next();
-  const url = allowedRoutes.find((item) => item.path === req.originalUrl);
-  if (url && url.methods.includes(req.method)) {
+
+  let queryString;
+
+  console.log('req.', req.originalUrl);
+
+  if (req.query) {
+    queryString = url.parse(req.url).query;
+  }
+
+  const link = allowedRoutes.find((item) => {
+    if (queryString) {
+      return `${item.path}?${queryString}` === req.originalUrl;
+    }
+    return item.path === req.originalUrl;
+  });
+
+  if (link && link.methods.includes(req.method)) {
     return next();
   }
   const authorization = req.header('Authorization');
+
   if (!authorization) {
     return res.status(401).json({ message: 'No authorization header found' });
   }
+
   try {
     const token = authorization.replace('Bearer ', '');
     jwt.verify(token, secret);
@@ -135,30 +129,65 @@ const routerList = [
     path: '/login/verify',
     methods: ['GET'],
   },
+  {
+    path: '/organization/initiatives/report',
+    methods: ['GET'],
+  },
 ];
 
-const loginFB = async (info) => {
+const login = async (socialData) => {
   let user;
-  if (info.id) {
+  if (!socialData.email && !socialData.id) {
     user = await User.findOne({
-      where: { facebookId: info.id },
+      where: { email: socialData },
       include: [
         Interests,
-        {
-          model: Initiative,
-          as: 'UserInitiatives',
-        },
       ],
     });
   }
-  if (user === null) {
+
+  if (socialData.email) {
     user = await User.findOne({
-      where: { username: info.name },
+      where: { email: socialData.email },
       include: [
         Interests,
+      ],
+    });
+  }
+
+  if (socialData.id) {
+    user = await User.findOne({
+      where: { facebookId: socialData.id },
+      include: [
+        Interests,
+      ],
+    });
+  }
+
+  if (!user) {
+    return undefined;
+  }
+
+  let initiatives;
+  let matches;
+  if (user) {
+    initiatives = await Initiative.findAll({
+      where: {
+        UserId: user.id,
+        muted: {
+          [Op.or]: [false, null],
+        },
+        deletedAt: null,
+      },
+    });
+    matches = await Matches.findAll({
+      where: {
+        UserId: user.id,
+        liked: true,
+      },
+      include: [
         {
           model: Initiative,
-          as: 'UserInitiatives',
           where: {
             muted: {
               [Op.or]: [false, null],
@@ -169,27 +198,6 @@ const loginFB = async (info) => {
       ],
     });
   }
-  if (!user) {
-    return undefined;
-  }
-  const matches = await Matches.findAll({
-    where: {
-      UserId: user.id,
-      liked: true,
-    },
-    include: [
-      {
-        model: Initiative,
-        where: {
-          muted: {
-            [Op.or]: [false, null],
-          },
-          deletedAt: null,
-        },
-      },
-    ],
-  });
-
   const data = {
     id: user.id,
     ...UsersLong.format(user),
@@ -200,7 +208,7 @@ const loginFB = async (info) => {
       type: item.type,
     })),
     listening_groups: [
-      ...user.UserInitiatives.map((item) => ({
+      ...initiatives.map((item) => ({
         id: item.id,
         name: item.name,
       })),
@@ -210,19 +218,9 @@ const loginFB = async (info) => {
       })),
     ],
   };
-  return await auth(data);
+  return auth(data);
 };
 
-const auth = async (data) => jwt.sign({
-  sub: data.id,
-  info: data,
-  aud: 'Match4Action',
-  iss: 'Match4Action',
-},
-secret, {
-  expiresIn: '7d',
-});
-
 module.exports = {
-  login, loginFB, loggedUser, requiresAuth, routerList,
+  login, loggedUser, requiresAuth, routerList, handleDecode,
 };
